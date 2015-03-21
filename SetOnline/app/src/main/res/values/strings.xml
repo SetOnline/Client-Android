@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">SetOnline</string>
+	<string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_profil_trophees">profil_trophees</string>
+    <string name="title_activity_profil_medals">profil_medals</string>
+    <string name="title_activity_profil_amis">profil_amis</string>
+    <string name="title_activity_inscription_view">Inscription_view</string>
+    <string name="title_activity_Connexion">Set Online</string>
+
+    <string name="bt_validation">Valider</string>
+    <string name="tv_separator">_______</string>
+
+    <string name="tv_inscription">Création de compte</string>
+    <string name="tv_pseudo">Pseudo</string>
+    <string name="tv_mail">Adresse mail valide</string>
+    <string name="tv_password">Mot de passe</string>
+    <string name="tv_avatar">Avatar</string>
+    <string name="bt_uploadAvatar">Image...</string>
+    <string name="bt_avatarFromCamera">Avatar photo...</string>
+    <string name="title_activity_modification_mot_de_passe_view">ModificationMotDePasse_view</string>
+
+    <string name="tv_modifyProfil">Mise à jour du profil</string>
+    <string name="tv_ancientPassword">Entrez votre mot de passe actuel</string>
+    <string name="tv_newPassword">Entrez votre nouveau mot de passe</string>
+    <string name="tv_modifyPassword">Modifier le mot de passe</string>
+    <string name="tv_modifyAvatar">Modifier l\'avatar</string>
+
+    <string name="error_nickname_too_short">pseudo invalide ! (3 caractères minimum)</string>
+    <string name="error_invalid_mail">Erreur ! adresse mail invalide !</string>
+    <string name="error_password_too_short">mot de passe invalide ! (10 caractères minimum)</string>
+
+    <string name="error_info_connection">Informations de connexion erronées !</string>
+
+    <string name="bt_connection">Connexion</string>
+    <string name="bt_accessProfile">Mon profil</string>
+    <string name="bt_accessGameOnline">Jouer !</string>
+    <string name="bt_accessRanks">Classement</string>
+    <string name="bt_registration">Inscription</string>
+
+    <string name="tv_foundSets">Sets trouvés</string>
+
+    <string name="bt_anonymousMode">Sans connexion</string>
+
+    <string name="notif_title_inscription">Inscription SetOnline</string>
+    <string name="notif_inscription">Pensez à valider votre adresse mail !</string>
+    <string name="error_inscription">Erreur inscription</string>
+
+    <string name="error_server_offline">Serveur injoignable !</string>
+
+</resources>

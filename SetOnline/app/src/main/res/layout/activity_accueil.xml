@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@drawable/background"
+    tools:context="com.pancake.setonline">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bt_accessProfile"
+        android:id="@+id/buttonMonProfil"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/buttonJouer"
+        android:layout_alignStart="@+id/buttonJouer"
+        android:layout_alignRight="@+id/buttonClassement"
+        android:layout_alignEnd="@+id/buttonClassement"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bt_accessGameOnline"
+        android:id="@+id/buttonJouer"
+        android:layout_alignLeft="@+id/buttonClassement"
+        android:layout_alignStart="@+id/buttonClassement"
+        android:layout_alignRight="@+id/buttonClassement"
+        android:layout_alignEnd="@+id/buttonClassement"
+        android:layout_above="@+id/buttonMonProfil" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bt_accessRanks"
+        android:id="@+id/buttonClassement"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/buttonMonProfil" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Pancake© corporation. All rights reserved."
+        android:id="@+id/textView4"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+</RelativeLayout>

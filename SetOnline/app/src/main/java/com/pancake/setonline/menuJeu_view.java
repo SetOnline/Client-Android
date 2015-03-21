@@ -1,0 +1,97 @@
+package com.pancake.setonline;
+
+import android.content.ComponentName;
+import android.content.pm.PackageManager;
+import android.provider.Settings;
+import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.content.Intent;
+
+public class menuJeu_view extends ActionBarActivity {
+
+    /**
+     * Fonction appellée automatiquement pour chaque activité
+     * @param savedInstanceState
+     */
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_accueil);
+
+        // vérification de la présence d'une connexion data/wifi, dans le cas où il n'y a aucune connexion, redirection vers le menu wifi
+        if(!NetworkStateMonitor.haveNetworkConnection(this.getBaseContext())){
+            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+        }
+
+        // définition des trois boutons
+        Button btnJouer = (Button)findViewById(R.id.buttonJouer);
+        Button btnProfil = (Button)findViewById(R.id.buttonMonProfil);
+        Button btnClassement = (Button)findViewById(R.id.buttonClassement);
+
+        //définition de l'action des trois boutons
+        btnJouer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Jeu_view.class);
+                startActivity(intent);
+            }
+        });
+
+        btnProfil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Profil.class);
+                startActivity(intent);
+            }
+        });
+
+        btnClassement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Classement.class);
+                startActivity(intent);
+            }
+        });
+
+        // disable receiver
+        ComponentName receiver = new ComponentName(menuJeu_view.this, NetworkStateMonitor.class);
+        PackageManager pm = this.getPackageManager();
+
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+    }
+
+    //gestion du menu . . .
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    //fonction appellée à la fermeture de l'activité
+    public void onDestroy() {
+        super.onDestroy();
+
+        //mSocket.disconnect();
+        //mSocket.off("Nouvelle partie", onNewGame);
+        //mSocket.off("timer", onTimerUpdate);
+    }
+}

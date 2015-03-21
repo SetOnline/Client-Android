@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_row">
+    <ImageView
+        android:contentDescription="row"
+        android:id="@+id/card1"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="5dp"
+        android:src="@drawable/ic_launcher2" >
+    </ImageView>
+    <ImageView
+        android:contentDescription="row"
+        android:id="@+id/card2"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="5dp"
+        android:src="@drawable/ic_launcher2" >
+    </ImageView>
+
+    <ImageView
+        android:contentDescription="row"
+        android:id="@+id/card3"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="5dp"
+        android:src="@drawable/ic_launcher2" >
+    </ImageView>
+</LinearLayout>
