@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 /**
  * Created by Matthieu on 25/03/2015.
  */
@@ -15,6 +17,7 @@ public class JeuTypeVitesseOffline extends JeuType {
     protected CountDownTimer cdtTIME;
     private int nbSetsRestantsATrouver = 0;
     private String partieEnCours;
+    private ArrayList<JSONArray> setsTrouves;
 
     public JeuTypeVitesseOffline(){
 
@@ -33,6 +36,7 @@ public class JeuTypeVitesseOffline extends JeuType {
             e.printStackTrace();
         }
         fenetreJeu.onNewGame(partieEnCours);
+        setsTrouves = new ArrayList<JSONArray>();
 
         // timer
         cdtTIME = new CountDownTimer(duree_partie, 1000) {
@@ -50,6 +54,7 @@ public class JeuTypeVitesseOffline extends JeuType {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                setsTrouves = new ArrayList<JSONArray>();
                 fenetreJeu.onNewGame(partieEnCours);
 
                 this.start();
@@ -96,6 +101,34 @@ public class JeuTypeVitesseOffline extends JeuType {
             String stringified = nSet.toString(); // Stringification du Json
             fenetreJeu.onSetIncorrect(stringified);
         } else {
+
+            for(int i = 0; i != setsTrouves.size(); ++i){
+                try {
+                    JSONObject c1 = setsTrouves.get(i).getJSONObject(0);
+                    JSONObject c2 = setsTrouves.get(i).getJSONObject(1);
+                    JSONObject c3 = setsTrouves.get(i).getJSONObject(2);
+
+                    boolean b1, b2, b3;
+                    b1 = c1.getString("value").equals(setTrouve.substring(0, 4)) ||
+                            c1.getString("value").equals(setTrouve.substring(4, 8)) ||
+                            c1.getString("value").equals(setTrouve.substring(8, 12));
+                    b2 = c2.getString("value").equals(setTrouve.substring(0, 4)) ||
+                            c2.getString("value").equals(setTrouve.substring(4, 8)) ||
+                            c2.getString("value").equals(setTrouve.substring(8, 12));
+                    b3 = c3.getString("value").equals(setTrouve.substring(0, 4)) ||
+                            c3.getString("value").equals(setTrouve.substring(4, 8)) ||
+                            c3.getString("value").equals(setTrouve.substring(8, 12));
+
+                    if(b1 && b2 && b3){
+                        fenetreJeu.onSetIncorrect(nSet.toString()); // set déjà donné
+                        return;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+
             nbSetsRestantsATrouver--;
             JSONObject ob4 = new JSONObject();
             try {
@@ -108,8 +141,8 @@ public class JeuTypeVitesseOffline extends JeuType {
                 return;
             }
 
-            String stringified = nSet.toString(); // Stringification du Json
-            fenetreJeu.onSetCorrect(stringified);
+            setsTrouves.add(nSet);
+            fenetreJeu.onSetCorrect(nSet.toString());
         }
     }
 }
