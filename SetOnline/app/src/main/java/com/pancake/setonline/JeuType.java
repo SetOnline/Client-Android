@@ -2,60 +2,37 @@ package com.pancake.setonline;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Environment;
+import android.webkit.CookieManager;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.engineio.client.Transport;
 import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Manager;
 import com.github.nkzawa.socketio.client.Socket;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 
 /**
  * Created by Matthieu on 21/03/2015.
  */
 public abstract class JeuType {
     protected IJeu_receiver fenetreJeu;
-    protected Socket mSocket;
-    protected static final String serverAddress = "http://37.59.123.190:1337";
     protected static Activity act;
+    //protected static String cookie = CookieManager.getInstance().getCookie(serverAddress);
 
-    public boolean init(IJeu_receiver fj, Activity a){
-        fenetreJeu = fj;
-        act = a;
+    public abstract boolean init(IJeu_receiver fj, Activity a);
 
-        // nodeJS, gestion de la communication client/serveur
-        try {
-            mSocket = IO.socket(new URI(serverAddress));
-        } catch (Exception e) {
-            e.printStackTrace();
-            //System.out.println("error initializing mSocket");
-            return false;
-        }
-
-        /**
-         * Fonction appellée automatiquement lors d'une connexion réussie
-         */
-        mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-
-            public void call(Object... args) {
-                //Log.d("ActivityName: ", "socket connected");
-                //Toast.makeText(Jeu.this, "Connection réussie !", Toast.LENGTH_LONG).show();
-                // emit anything you want here to the server
-                //socket.emit("login", some);
-                //socket.disconnect();
-            }
-
-            // this is the emit from the server
-        });
-
-        mSocket.connect();
-        return true;
-    }
-
-    public void shutDown(){
-        // déconnexion du socket
-        mSocket.disconnect();
-    }
+    public abstract void shutDown();
 
     public abstract void sendSet(String s);
 }

@@ -13,7 +13,7 @@ import org.json.JSONObject;
 /**
  * Created by Matthieu on 21/03/2015.
  */
-public class JeuTypeVitesseOnline extends JeuType {
+public class JeuTypeVitesseOnline extends JeuTypeOnline {
     /**
      * évènement nouvelle partie
      * Données au format Json:

@@ -134,7 +134,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         ivDifficultyStar2.setImageResource(0);
         ivDifficultyStar3.setImageResource(0);
 
-        jeu = new JeuTypeVitesseOnline();
+        jeu = new JeuTypeVitesseOffline(); //JeuTypeVitesseOnline();
         if(!jeu.init(this, this)) Toast.makeText(Jeu_view.this, getString(R.string.error_server_offline), Toast.LENGTH_LONG).show();
 
         enableBroadcastReceiver(); // active la détection de perte/récupération de connexion date/wifi
@@ -253,7 +253,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
     /**
      * évènement synchronisation du timer
      */
-     public void onGameTimerUpdate(int newTime) {
+    public void onGameTimerUpdate(int newTime) {
         // conversion du nombre de secondes en minute : seconde
         int seconds = 0;
         int minutes = 0;

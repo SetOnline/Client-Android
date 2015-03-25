@@ -2,7 +2,9 @@ package com.pancake.setonline;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.os.Environment;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -32,7 +34,19 @@ public class Profil_model {
         return matcher.matches();
     }
 
+    public static void createAppFolderIfNeeded(){
+        File directory = new File(Environment.getExternalStorageDirectory()+File.separator+"SetOnline");
+        if(!directory.exists())
+            directory.mkdirs();
+    }
 
+    public static String getAppFolder(){
+        return Environment.getExternalStorageDirectory()+File.separator+"SetOnline";
+    }
+
+    public static String getCookieFilename(){
+        return getAppFolder()+File.separator+"pancake.cookie";
+    }
 
     public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
         int width = bm.getWidth();

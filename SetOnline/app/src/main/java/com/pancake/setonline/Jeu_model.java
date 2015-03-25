@@ -1,4 +1,11 @@
 package com.pancake.setonline;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Random;
+
 /**
  * Created by Matthieu on 05/03/2015.
  */
@@ -48,5 +55,111 @@ public class Jeu_model {
      */
     public static boolean isAValidSet(String setTrouve){
         return isAValidSet(setTrouve.substring(0, 4), setTrouve.substring(4, 8), setTrouve.substring(8, 12));
+    }
+
+    ///////////////////////////
+    // abcd
+    // avec
+    // a : couleur (1 : R, 2 : V, 3 : B)
+    // b : remplissage (1 : plein, 2 : rayé, 3 : vide)
+    // c : quantité (1, 2, 3)
+    // d : forme (1 : éclair, 2 : sphère, 3 : triangle)
+    public static String genererCombinaison() {
+        String combi = "";
+        Random r = new Random();
+        for (int i = 0; i != 4; ++i) {
+            combi += (1+r.nextInt(3));
+        }
+
+        return combi;
+    }
+
+    public static boolean carteDejaTiree(JSONArray tab, String carte) {
+        for (int i = 0; i != tab.length(); ++i) {
+            try {
+                JSONObject c = tab.getJSONObject(i);
+
+                if (c.getString("value").equals(carte)) {
+                    return true;
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static String generateNewGame(){
+        JSONArray tabCartes = new JSONArray();
+        int nbSetsTrouvablesPartieEnCours = 0;
+
+        while (nbSetsTrouvablesPartieEnCours == 0) {
+            tabCartes = new JSONArray(); // on delete tout
+            for (int i = 0; i != 12; ++i) {
+                String carteTiree = genererCombinaison();
+                if (carteDejaTiree(tabCartes, carteTiree)) {
+                    i--;
+                } else {
+                    //result.push({ name: name, goals: goals[name] });
+                    JSONObject carte = new JSONObject();
+                    try {
+                        carte.put("name", "carte"+i);
+                        carte.put("value", carteTiree);
+                        tabCartes.put(carte);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+            }
+            nbSetsTrouvablesPartieEnCours = getNbSolutions(tabCartes.toString());
+        }
+
+        JSONObject nbSets = new JSONObject();
+        try {
+            nbSets.put("name", "nbSets");
+            nbSets.put("value", nbSetsTrouvablesPartieEnCours);
+            tabCartes.put(nbSets);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return tabCartes.toString();
+    }
+
+    public static int getNbSolutions(String partie){
+        JSONArray tabCartes = null;
+        try {
+            tabCartes = new JSONArray(partie);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return -1;
+        }
+        int res = 0;
+
+        for (int i = 0; i != 10; ++i) {
+            for (int j = i+1; j != 11; ++j) {
+                for (int k = j+1; k != 12; ++k) {
+                    try {
+                        JSONObject c1 = tabCartes.getJSONObject(i);
+                        JSONObject c2 = tabCartes.getJSONObject(j);
+                        JSONObject c3 = tabCartes.getJSONObject(k);
+
+                        if (isAValidSet(c1.getString("value"), c2.getString("value"), c3.getString("value"))) {
+                            res++;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return -1;
+                    }
+                }
+            }
+        }
+
+        return res;
     }
 }
