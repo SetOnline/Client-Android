@@ -48,8 +48,6 @@ public class ModificationProfil_view extends ActionBarActivity {
     private static final int ACTION_SELECT_PICTURE = 1;
     private static final int ACTION_TAKE_PHOTO = 2;
 
-    private String avatar_filename = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,9 +113,8 @@ public class ModificationProfil_view extends ActionBarActivity {
         bt_loadAvatarCamera = (Button)findViewById(R.id.btAvatarCamera);
         bt_loadAvatarCamera.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                File storageDir = Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES);
-                File f = new File(storageDir.getPath(), "profil.jpg");
+                Profil_model.createAppFolderIfNeeded();
+                File f = new File(Profil_model.getAvatarFilename());
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.fromFile(f));
@@ -152,11 +149,10 @@ public class ModificationProfil_view extends ActionBarActivity {
                 //bitmapdata = bos.toByteArray();
                 ivAvatar.setImageBitmap(myImage);
 
-                Bitmap saved = Profil_model.getResizedBitmap(myImage, 150, 150);
-                File storageDir = Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES);
-                File f = new File(storageDir.getPath(), "profil.jpg");
-                //Toast.makeText(getApplicationContext(), storageDir.getPath() + "/profil.jpg", Toast.LENGTH_SHORT).show();
+                Bitmap saved = Profil_model.getResizedBitmap(myImage, Profil_model.AVATAR_PICTURE_SIZE, Profil_model.AVATAR_PICTURE_SIZE);
+                Profil_model.createAppFolderIfNeeded();
+                File f = new File(Profil_model.getAvatarFilename());
+
                 try {
                     f.createNewFile();
                     //Convert bitmap to byte array
@@ -170,20 +166,12 @@ public class ModificationProfil_view extends ActionBarActivity {
                     fos.flush();
                     fos.close();
 
-                    avatar_filename = storageDir.getPath() + "/profil.jpg";
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else if(requestCode == ACTION_TAKE_PHOTO){
-                /*Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                ivAvatar.setImageBitmap(imageBitmap);*/
-
-                File storageDir = Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES);
-
-                //create a file to write bitmap data
-                File f = new File(storageDir.getPath(), "profil.jpg");
+                Profil_model.createAppFolderIfNeeded();
+                File f = new File(Profil_model.getAvatarFilename());
 
                 BitmapFactory.Options bfOptions = new BitmapFactory.Options();
 
@@ -201,11 +189,9 @@ public class ModificationProfil_view extends ActionBarActivity {
                     return;
                 }
                 final Bitmap myImage = BitmapFactory.decodeStream(stream, null , bfOptions);
-                Bitmap saved = Profil_model.getResizedBitmap(myImage, 150, 150);
+                Bitmap saved = Profil_model.getResizedBitmap(myImage, Profil_model.AVATAR_PICTURE_SIZE, Profil_model.AVATAR_PICTURE_SIZE);
                 f.delete();
 
-
-                //Toast.makeText(getApplicationContext(), storageDir.getPath() + "/profil.jpg", Toast.LENGTH_SHORT).show();
                 try {
                     f.createNewFile();
                     //Convert bitmap to byte array
@@ -218,12 +204,9 @@ public class ModificationProfil_view extends ActionBarActivity {
                     fos.write(bitmapdata);
                     fos.flush();
                     fos.close();
-
-                    avatar_filename = storageDir.getPath() + "/profil.jpg";
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                avatar_filename = storageDir.getPath() + "/profil.jpg";
                 ivAvatar.setImageBitmap(saved);
             }
         }

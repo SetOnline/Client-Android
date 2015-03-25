@@ -22,6 +22,8 @@ public class Profil_model {
     public static String pseudo = null;
     public static String mail = null;
 
+    public static final int AVATAR_PICTURE_SIZE = 256;
+
     public static String getTimeStamp(){
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
@@ -46,6 +48,10 @@ public class Profil_model {
 
     public static String getCookieFilename(){
         return getAppFolder()+File.separator+"pancake.cookie";
+    }
+
+    public static String getAvatarFilename(){
+        return getAppFolder()+File.separator+"avatar.jpg";
     }
 
     public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {

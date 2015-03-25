@@ -10,6 +10,13 @@ import java.util.Random;
  * Created by Matthieu on 05/03/2015.
  */
 public class Jeu_model {
+    public enum gameMod{
+        timed_online,
+        timed_offline;
+    }
+
+    public static gameMod actualGameMode;
+
     /**
      *
      * @param prop1 la ième propriété de la 1ere carte
