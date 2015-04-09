@@ -1,16 +1,97 @@
 package com.pancake.setonline;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.net.URI;
 
 
 public class Classement extends ActionBarActivity {
 
+    private Socket mSocket;
+
+    private ListView lv_classement;
+    private GameClassementListAdapter lv_adapter_classement;
+
+        private Emitter.Listener onClassementResult = new Emitter.Listener() {
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        // get JSON
+                        lv_classement.setAdapter(null);
+
+                        System.out.println("RECEIVED : " + (String)args[0]);
+
+                        JSONArray data = null; // remise en format Json du Json stringifié
+                        try {
+                            data = new JSONArray((String)args[0]);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        String newList[] = new String[data.length()];
+
+                        for(int i = 0; i != data.length(); ++i){
+                            try {
+                                newList[i] = data.getJSONObject(i).getString("name") + '\n' + data.getJSONObject(i).getString("value");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                return;
+                            }
+                        }
+
+                        for(String s : newList){
+                            System.out.println("add : " + s);
+                        }
+
+                        lv_adapter_classement = new GameClassementListAdapter(getBaseContext(), newList);
+                        lv_classement.setAdapter(lv_adapter_classement);
+                    }
+                });
+            }
+        };
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_classement);
+
+        lv_classement = (ListView)findViewById(R.id.lvClassement);
+
+        // nodeJS, gestion de la communication client/serveur
+        try {
+            mSocket = IO.socket(new URI("http://37.59.123.190:1337"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            //System.out.println("error initializing mSocket");
+            Toast.makeText(Classement.this, "Serveur hors ligne :(", Toast.LENGTH_LONG).show();
+        }
+
+        mSocket.connect();
+
+        mSocket.on("Reponse classement", onClassementResult);
+
+        mSocket.emit("Demande classement");
+
+        Profil_model.activateCookies(mSocket);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -31,5 +112,48 @@ public class Classement extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Adapter : représente une ligne dans la liste des sets trouvés
+     */
+    private class GameClassementListAdapter extends ArrayAdapter<String> {
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater)
+                    getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            View rowView = inflater.inflate(R.layout.classement_row_layout, parent, false);
+
+            // récupération de la ligne (pseudo + score)
+            TextView tvPseudo = (TextView) rowView.findViewById(R.id.tv_crl_pseudo);
+            TextView tvScore = (TextView) rowView.findViewById(R.id.tv_crl_score);
+
+            // récupération des numéros des cartes du ième set trouvé
+            String data[] = getItem(position).split("\n");
+            String pseudo = data[0];
+            String score = data[1];
+
+            if(convertView == null ) {
+                tvPseudo.setText(pseudo);
+                tvScore.setText(score);
+            }else
+                rowView = (View)convertView;
+
+            return rowView;
+        }
+
+        public GameClassementListAdapter(Context context, String[] values) {
+            super(context, R.layout.set_row_layout, values);
+        }
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+
+        // déconnexion du socket
+        mSocket.disconnect();
+
+        mSocket.off("Reponse classement");
     }
 }

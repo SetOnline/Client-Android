@@ -1,6 +1,11 @@
 package com.pancake.setonline;
 
 import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,9 +14,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.engineio.client.transports.WebSocket;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
@@ -19,7 +27,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.net.ssl.SSLContext;
 
 public class Connexion extends ActionBarActivity {
     // NodeJS
@@ -32,6 +44,8 @@ public class Connexion extends ActionBarActivity {
 
     private Button btRegistration;
     private Button btAnonymousGame;
+
+    private ImageView loading;
 
     private Emitter.Listener onConnexionResult = new Emitter.Listener() {
         public void call(final Object... args) {
@@ -58,20 +72,81 @@ public class Connexion extends ActionBarActivity {
         etNickname = (EditText)findViewById(R.id.login);
         etPassword = (EditText)findViewById(R.id.mdp);
 
-        // nodeJS, gestion de la communication client/serveur
+        loading = (ImageView)findViewById(R.id.ivLoading);
+        loading.setBackgroundResource(R.drawable.load_animation);
+        AnimationDrawable animLoad = (AnimationDrawable)loading.getBackground();
+        animLoad.start();
+
         try {
             mSocket = IO.socket(new URI("http://37.59.123.190:1337"));
-        } catch (Exception e) {
+            //connect();
+            // interface
+
+        } catch (URISyntaxException e) {
             e.printStackTrace();
-            //System.out.println("error initializing mSocket");
-            Toast.makeText(Connexion.this, "Serveur hors ligne :(", Toast.LENGTH_LONG).show();
         }
 
-        mSocket.connect();
+        Profil_model.activateCookies(mSocket);
 
         mSocket.on("Resultat connexion", onConnexionResult);
 
-        // interface
+        mSocket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+
+            public void call(Object... args) {
+                //Log.d("ActivityName: ", "socket connected");
+                //Toast.makeText(Jeu.this, "Connection réussie !", Toast.LENGTH_LONG).show();
+                // emit anything you want here to the server
+                //socket.emit("login", some);
+                //socket.disconnect();
+                Exception err = (Exception)args[0];
+                System.out.println("EVENT_CONNECT_ERROR");
+                err.printStackTrace();
+            }
+
+            // this is the emit from the server
+        });
+
+        mSocket.on(Socket.EVENT_ERROR, new Emitter.Listener() {
+
+            public void call(Object... args) {
+                //Log.d("ActivityName: ", "socket connected");
+                //Toast.makeText(Jeu.this, "Connection réussie !", Toast.LENGTH_LONG).show();
+                // emit anything you want here to the server
+                //socket.emit("login", some);
+                //socket.disconnect();
+                Exception err = (Exception)args[0];
+                System.out.println("EVENT_ERROR");
+                err.printStackTrace();
+            }
+
+            // this is the emit from the server
+        });
+
+        mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+            public void call(Object... args) {
+                //Log.d("ActivityName: ", "socket connected");
+                //Toast.makeText(Jeu.this, "Connection réussie !", Toast.LENGTH_LONG).show();
+                // emit anything you want here to the server
+                //socket.emit("login", some);
+                //socket.disconnect();
+                System.out.println("CONNECTED " + args.length);
+                //System.out.println((String)args[0]);
+            }
+
+            // this is the emit from the server
+        });
+        mSocket.on(Socket.EVENT_MESSAGE, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                // receive binary data
+                byte[] data = (byte[])args[0];
+                System.out.println("RECEIVED DATA BINARY :");
+                System.out.println(data);
+            }
+        });
+
+        connect();
 
         ImageView btnSeConnecter = (ImageView)findViewById(R.id.ivConnect);
         btnSeConnecter.setOnClickListener(new View.OnClickListener() {
@@ -101,14 +176,25 @@ public class Connexion extends ActionBarActivity {
         });
 
         btRegistration = (Button)findViewById(R.id.btRegistration);
+
+        Typeface font = Typeface.createFromAsset(getAssets(), Profil_model.defaultFontName);
+
+        TextView tvAppName = (TextView)findViewById(R.id.tvAppName);
+        tvAppName.setTypeface(font);
+        etNickname.setTypeface(font);
+        etPassword.setTypeface(font);
+
+        btRegistration.setTypeface(font);
         btRegistration.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 Intent intent = new Intent(getApplicationContext(), Inscription_view.class);
                 startActivity(intent);
+                disconnect();
             }
         });
 
         btAnonymousGame = (Button)findViewById(R.id.btAnonymousGame);
+        btAnonymousGame.setTypeface(font);
         btAnonymousGame.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 Intent intent = new Intent(getApplicationContext(), menuJeu_view.class);
@@ -139,12 +225,23 @@ public class Connexion extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onDestroy() {
-        super.onDestroy();
+    public void connect(){
+        System.out.println("Connect");
+        // nodeJS, gestion de la communication client/serveur
 
+        mSocket.connect();
+    }
+
+    public void disconnect(){
         // déconnexion du socket
         mSocket.disconnect();
 
         mSocket.off("Resultat connexion");
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+
+        disconnect();
     }
 }

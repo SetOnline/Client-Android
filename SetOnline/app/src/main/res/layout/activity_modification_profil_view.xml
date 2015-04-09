@@ -5,7 +5,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="com.pancake.setonline">
+    tools:context="com.pancake.setonline"
+    android:background="@drawable/background">
 
     <TextView
         android:layout_width="wrap_content"
@@ -98,13 +99,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/bt_uploadAvatar"
-                android:id="@+id/btUploadAvatar" />
+                android:id="@+id/btUploadAvatar"
+                android:background="@drawable/button_pic"
+                style="?android:attr/borderlessButtonStyle"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/bt_avatarFromCamera"
-                android:id="@+id/btAvatarCamera" />
+                android:id="@+id/btAvatarCamera"
+                android:background="@drawable/button_pic"
+                style="?android:attr/borderlessButtonStyle"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -117,7 +122,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/bt_validation"
-                android:id="@+id/btValidateProfilModif" />
+                android:id="@+id/btValidateProfilModif"
+                android:background="@drawable/button_pic"
+                style="?android:attr/borderlessButtonStyle"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

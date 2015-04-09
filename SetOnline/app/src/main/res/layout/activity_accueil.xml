@@ -16,7 +16,9 @@
         android:layout_alignLeft="@+id/buttonJouer"
         android:layout_alignStart="@+id/buttonJouer"
         android:layout_alignRight="@+id/buttonClassement"
-        android:layout_alignEnd="@+id/buttonClassement"/>
+        android:layout_alignEnd="@+id/buttonClassement"
+        android:background="@drawable/button_pic"
+        style="?android:attr/borderlessButtonStyle"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -27,7 +29,9 @@
         android:layout_alignStart="@+id/buttonClassement"
         android:layout_alignRight="@+id/buttonClassement"
         android:layout_alignEnd="@+id/buttonClassement"
-        android:layout_above="@+id/buttonMonProfil" />
+        android:layout_above="@+id/buttonMonProfil"
+        android:background="@drawable/button_pic"
+        style="?android:attr/borderlessButtonStyle"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -35,7 +39,9 @@
         android:text="@string/bt_accessRanks"
         android:id="@+id/buttonClassement"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/buttonMonProfil" />
+        android:layout_below="@+id/buttonMonProfil"
+        android:background="@drawable/button_pic"
+        style="?android:attr/borderlessButtonStyle"/>
 
     <TextView
         android:layout_width="wrap_content"

@@ -28,7 +28,7 @@
 
     <string name="error_nickname_too_short">pseudo invalide ! (3 caractères minimum)</string>
     <string name="error_invalid_mail">Erreur ! adresse mail invalide !</string>
-    <string name="error_password_too_short">mot de passe invalide ! (10 caractères minimum)</string>
+    <string name="error_password_too_short">mot de passe invalide ! (4 caractères minimum)</string>
 
     <string name="error_info_connection">Informations de connexion erronées !</string>
 

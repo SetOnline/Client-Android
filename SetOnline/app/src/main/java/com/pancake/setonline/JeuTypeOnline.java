@@ -46,66 +46,7 @@ public abstract class JeuTypeOnline extends JeuType{
 
         //mSocket.addHeader("Cookie", cookie);
 
-        /*mSocket.on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                // Called on a new transport created.
-                Transport transport = (Transport)args[0];
-
-                transport.on(Transport.EVENT_REQUEST_HEADERS, new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        @SuppressWarnings("unchecked")
-                        Map<String, String> headers = (Map<String, String>)args[0];
-                        // send cookies to server.
-                        //headers.put("Cookie", "foo=1;");
-
-                        try {
-                            BufferedReader br = new BufferedReader(new FileReader(Profil_model.getCookieFilename()));
-                            String line = br.readLine();
-
-                            while (line != null) {
-                                headers.put("Cookie", line);
-                                line = br.readLine();
-                            }
-
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                            return;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-                    }
-                }).on(Transport.EVENT_RESPONSE_HEADERS, new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        @SuppressWarnings("unchecked")
-                        Map<String, String> headers = (Map<String, String>)args[0];
-                        // get cookies from server.
-                        String cookie = headers.get("Set-Cookie");
-
-                        Profil_model.createAppFolderIfNeeded();
-
-                        File file = new File(Profil_model.getCookieFilename());
-                        BufferedWriter output = null;
-                        try {
-                            output = new BufferedWriter(new FileWriter(file));
-
-
-                            for (Map.Entry<String, String> entry : headers.entrySet()){
-                                output.write(entry.getKey() + "=" + entry.getValue() + "\n");
-                            }
-
-                            output.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-                    }
-                });
-            }
-        });*/
+        /**/
 
         mSocket.connect();
         return true;

@@ -60,6 +60,7 @@ public class Inscription_view extends ActionBarActivity {
             runOnUiThread(new Runnable() {
                 public void run() {
                     String s = (String)args[0];
+                    System.out.println("OnInscriptionResult !");
                     try {
                         JSONArray data = new JSONArray(s);
 
@@ -125,11 +126,7 @@ public class Inscription_view extends ActionBarActivity {
             Toast.makeText(Inscription_view.this, "Serveur hors ligne :(", Toast.LENGTH_LONG).show();
         }
 
-        System.out.println("COUCOU");System.out.println("COUCOU");
-        System.out.println("COUCOU");System.out.println("COUCOU");
-        System.out.println("COUCOU");System.out.println("COUCOU");
-        System.out.println("COUCOU");System.out.println("COUCOU");
-        System.out.println("COUCOU");System.out.println("COUCOU");
+        Profil_model.activateCookies(mSocket);
 
         mSocket.connect();
 
@@ -184,7 +181,7 @@ public class Inscription_view extends ActionBarActivity {
                     return;
                 }
 
-                if(etPassword.getText().length() < 10){
+                if(etPassword.getText().length() < 4){
                     Toast.makeText(getBaseContext(), R.string.error_password_too_short, Toast.LENGTH_LONG).show();
                     etPassword.requestFocus();
                     return;
@@ -215,6 +212,7 @@ public class Inscription_view extends ActionBarActivity {
                 inscription_packet.put(json_psswd);
 
                 mSocket.emit("Creation compte", inscription_packet.toString());
+                System.out.println("Creation compte");
             }
         });
     }
@@ -333,7 +331,7 @@ public class Inscription_view extends ActionBarActivity {
 
     public void onDestroy() {
         super.onDestroy();
-
+        System.out.println("disconnect");
         // déconnexion du socket
         mSocket.disconnect();
 
