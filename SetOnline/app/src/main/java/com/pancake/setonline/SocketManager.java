@@ -69,6 +69,14 @@ public class SocketManager {
         return Profil_model.getAppFolder()+File.separator+"pancakeIO.cookie";
     }
 
+
+    public static void destroyCookies(){
+        File f = new File(getCookieFilename());
+        if(f.exists()) f.delete();
+
+        f = new File(getCookieFilename2());
+        if(f.exists()) f.delete();
+    }
     public static void activateEngineCookies(final Socket mSocket){
         mSocket.on(Socket.EVENT_TRANSPORT, new Emitter.Listener() {
             @Override

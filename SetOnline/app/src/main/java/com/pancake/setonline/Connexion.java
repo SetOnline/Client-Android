@@ -82,6 +82,7 @@ public class Connexion extends ActionBarActivity {
         AnimationDrawable animLoad = (AnimationDrawable)loading.getBackground();
         animLoad.start();
 
+        SocketManager.destroyCookies();
         SocketManager.initServerConnexion();
         SocketManager.connectToServer();
 
@@ -168,5 +169,6 @@ public class Connexion extends ActionBarActivity {
         super.onDestroy();
 
         SocketManager.disconnectFromServer();
+        SocketManager.destroyCookies();
     }
 }
