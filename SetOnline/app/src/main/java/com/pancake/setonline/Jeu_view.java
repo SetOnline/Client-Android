@@ -134,7 +134,11 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         ivDifficultyStar2.setImageResource(0);
         ivDifficultyStar3.setImageResource(0);
 
-        jeu = new JeuTypeVitesseOnline(); // JeuTypeVitesseOffline(); //
+        if(SocketManager.isNetGame) {
+            jeu = new JeuTypeVitesseOnline();
+        } else {
+            jeu = new JeuTypeVitesseOffline();
+        }
         if(!jeu.init(this, this)) Toast.makeText(Jeu_view.this, getString(R.string.error_server_offline), Toast.LENGTH_LONG).show();
 
         //enableBroadcastReceiver(); // active la détection de perte/récupération de connexion date/wifi

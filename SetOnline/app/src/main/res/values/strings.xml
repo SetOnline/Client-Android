@@ -33,6 +33,7 @@
     <string name="error_info_connection">Informations de connexion erronées !</string>
 
     <string name="bt_connection">Connexion</string>
+    <string name="bt_disconnection">Déconnexion</string>
     <string name="bt_accessProfile">Mon profil</string>
     <string name="bt_accessGameOnline">Jouer !</string>
     <string name="bt_accessRanks">Classement</string>

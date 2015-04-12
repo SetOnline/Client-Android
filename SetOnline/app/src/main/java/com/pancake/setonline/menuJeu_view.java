@@ -30,6 +30,7 @@ public class menuJeu_view extends ActionBarActivity {
         Button btnJouer = (Button)findViewById(R.id.buttonJouer);
         Button btnProfil = (Button)findViewById(R.id.buttonMonProfil);
         Button btnClassement = (Button)findViewById(R.id.buttonClassement);
+        Button btnDeconnexion = (Button)findViewById(R.id.buttonDisconnect);
 
         //définition de l'action des trois boutons
         btnJouer.setOnClickListener(new View.OnClickListener() {
@@ -55,6 +56,17 @@ public class menuJeu_view extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+        if(SocketManager.isNetGame) {
+            btnDeconnexion.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SocketManager.logout();
+                    finish();
+                }
+            });
+        } else {
+            btnDeconnexion.setVisibility(View.INVISIBLE);
+        }
     }
 
     //gestion du menu . . .

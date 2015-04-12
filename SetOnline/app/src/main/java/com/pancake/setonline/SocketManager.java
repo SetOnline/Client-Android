@@ -22,6 +22,7 @@ public class SocketManager {
     public static Socket mSocketEngine = null;
     public static com.github.nkzawa.socketio.client.Socket mSocketIO = null;
     protected static final String serverAddress = "http://37.59.123.190:1337";
+    public static boolean isNetGame = true;
 
     public static void initServerConnexion(){
         if(mSocketEngine == null && mSocketIO == null){
@@ -260,5 +261,10 @@ public class SocketManager {
                 });
             }
         });
+    }
+
+    public static void logout(){
+        if(mSocketIO != null && mSocketEngine != null && mSocketIO.connected())
+            mSocketIO.emit("Deco");
     }
 }
