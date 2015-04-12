@@ -55,14 +55,6 @@ public class menuJeu_view extends ActionBarActivity {
                 startActivity(intent);
             }
         });
-
-        // disable receiver
-        ComponentName receiver = new ComponentName(menuJeu_view.this, NetworkStateMonitor.class);
-        PackageManager pm = this.getPackageManager();
-
-        pm.setComponentEnabledSetting(receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP);
     }
 
     //gestion du menu . . .

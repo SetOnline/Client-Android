@@ -5,9 +5,8 @@ import android.graphics.Matrix;
 import android.os.Environment;
 
 import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.engineio.client.Socket;
 import com.github.nkzawa.engineio.client.Transport;
-import com.github.nkzawa.socketio.client.Manager;
-import com.github.nkzawa.socketio.client.Socket;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -59,10 +58,6 @@ public class Profil_model {
         return Environment.getExternalStorageDirectory()+File.separator+"SetOnline";
     }
 
-    public static String getCookieFilename(){
-        return getAppFolder()+File.separator+"pancake.cookie";
-    }
-
     public static String getAvatarFilename(){
         return getAppFolder()+File.separator+"avatar.jpg";
     }
@@ -82,151 +77,5 @@ public class Profil_model {
         return resizedBitmap;
     }
 
-    public static String getCookieData(){
-        File f = new File(Profil_model.getCookieFilename());
-        if(!f.exists()) return "";
 
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(Profil_model.getCookieFilename()));
-            String line = br.readLine();
-            String cookie = "";
-
-            while (line != null) {
-                //headers.put("Cookie", line);
-                cookie += line;
-                line = br.readLine();
-            }
-
-            if(cookie.length() == 0){
-                br.close();
-                return "";
-            }
-
-            br.close();
-
-            return cookie;
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return "";
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-    public static void activateCookies(Socket mSocket){
-        System.out.println("activate cookies");
-
-
-        mSocket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                // Called on a new transport created.
-                Transport transport = (Transport)args[0];
-
-                transport.on(Transport.EVENT_REQUEST_HEADERS, new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        File f = new File(Profil_model.getCookieFilename());
-                        if(!f.exists()) return;
-
-                        @SuppressWarnings("unchecked")
-                        Map<String, String> headers = (Map<String, String>)args[0];
-                        System.out.println("dafuck ?");
-                        System.out.println("-----------------------");
-                        System.out.println(headers.toString());
-                        System.out.println("-----------------------");
-                        // send cookies to server.
-                        //headers.put("Cookie", "foo=1;");
-
-                        try {
-                            BufferedReader br = new BufferedReader(new FileReader(Profil_model.getCookieFilename()));
-                            String line = br.readLine();
-                            String cookie = "";
-
-                            while (line != null) {
-                                //headers.put("Cookie", line);
-                                cookie += line;
-                                line = br.readLine();
-                            }
-
-                            if(cookie.length() == 0){
-                                br.close();
-                                return;
-                            }
-
-                            headers.put("Cookie", cookie);
-                            headers.put("Set-Cookie", cookie);
-                            headers.put("X-SocketIO", cookie);
-
-                            System.out.println("SEND : " + cookie);
-
-                            br.close();
-
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                            return;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-                        //System.out.println("ASK COOKIE (" + args.length + ")");
-                    }
-                }).on(Transport.EVENT_RESPONSE_HEADERS, new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        @SuppressWarnings("unchecked")
-                        Map<String, String> headers = (Map<String, String>)args[0];
-                        System.out.println("dafuck 2 ?");
-                        System.out.println("-----------------------");
-                        System.out.println(headers.toString());
-                        System.out.println("-----------------------");
-                        // get cookies from server.
-                        String cookie = headers.get("Set-Cookie");
-                        if(cookie == null) return;
-
-                        Profil_model.createAppFolderIfNeeded();
-
-                        File file = new File(Profil_model.getCookieFilename());
-                        BufferedWriter output = null;
-                        try {
-                            output = new BufferedWriter(new FileWriter(file));
-
-
-                            /*for (Map.Entry<String, String> entry : headers.entrySet()){
-                                output.write(entry.getKey() + "=" + entry.getValue() + "\n");
-                            }*/
-                            System.out.println("RECEIVED : " + cookie);
-                            output.write(cookie);
-
-                            output.close();
-                            //System.out.println("RECEIVED COOKIE (" + args.length + ")");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-                    }
-                }).on(Transport.EVENT_OPEN, new Emitter.Listener(){
-
-                    @Override
-                    public void call(Object... objects) {
-                        System.out.println("TRANSPORT EVENT OPEN (" + objects.length + ")");
-                        for(int i = 0; i != objects.length; ++i){
-                            System.out.println(objects[i]);
-                        }
-                    }
-                }).on(Transport.EVENT_DRAIN, new Emitter.Listener() {
-                    @Override
-                    public void call(Object... objects) {
-                        System.out.println("TRANSPORT EVENT_DRAIN (" + objects.length + ")");
-                        for(int i = 0; i != objects.length; ++i){
-                            System.out.println(objects[i]);
-                        }
-                    }
-                });
-            }
-        });
-
-    }
 }

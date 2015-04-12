@@ -15,8 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+import com.github.nkzawa.engineio.client.Socket;
+//import com.github.nkzawa.socketio.client.IO;
+//import com.github.nkzawa.socketio.client.Socket;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,9 +26,6 @@ import java.net.URI;
 
 
 public class Classement extends ActionBarActivity {
-
-    private Socket mSocket;
-
     private ListView lv_classement;
     private GameClassementListAdapter lv_adapter_classement;
 
@@ -77,21 +75,12 @@ public class Classement extends ActionBarActivity {
         lv_classement = (ListView)findViewById(R.id.lvClassement);
 
         // nodeJS, gestion de la communication client/serveur
-        try {
-            mSocket = IO.socket(new URI("http://37.59.123.190:1337"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            //System.out.println("error initializing mSocket");
-            Toast.makeText(Classement.this, "Serveur hors ligne :(", Toast.LENGTH_LONG).show();
-        }
+        SocketManager.initServerConnexion();
+        SocketManager.connectToServer();
 
-        mSocket.connect();
+        SocketManager.mSocketIO.on("Reponse classement", onClassementResult);
 
-        mSocket.on("Reponse classement", onClassementResult);
-
-        mSocket.emit("Demande classement");
-
-        Profil_model.activateCookies(mSocket);
+        SocketManager.mSocketIO.emit("Demande classement");
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -152,8 +141,6 @@ public class Classement extends ActionBarActivity {
         super.onDestroy();
 
         // déconnexion du socket
-        mSocket.disconnect();
-
-        mSocket.off("Reponse classement");
+        SocketManager.mSocketIO.off("Reponse classement");
     }
 }

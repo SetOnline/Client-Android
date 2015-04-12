@@ -137,9 +137,10 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         jeu = new JeuTypeVitesseOnline(); // JeuTypeVitesseOffline(); //
         if(!jeu.init(this, this)) Toast.makeText(Jeu_view.this, getString(R.string.error_server_offline), Toast.LENGTH_LONG).show();
 
-        enableBroadcastReceiver(); // active la détection de perte/récupération de connexion date/wifi
+        //enableBroadcastReceiver(); // active la détection de perte/récupération de connexion date/wifi
     }
 
+    /*
     public void enableBroadcastReceiver(){
         ComponentName receiver = new ComponentName(Jeu_view.this, NetworkStateMonitor.class);
         PackageManager pm = this.getPackageManager();
@@ -157,6 +158,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP);
     }
+    */
 
     /**
      * récupération de l'image correspondant à la carte passée en param
@@ -247,7 +249,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
 
         jeu.shutDown();
 
-        disableBroadcastNetworkReceiver(); // arrêt de la détection de la perte/récupération de la connexion data/wifi
+        // disableBroadcastNetworkReceiver(); // arrêt de la détection de la perte/récupération de la connexion data/wifi
     }
 
     /**

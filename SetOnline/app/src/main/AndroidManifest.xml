@@ -36,12 +36,6 @@
             android:screenOrientation="portrait" >
         </activity>
 
-        <receiver android:name=".NetworkStateMonitor" >
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
-
         <activity
             android:name=".Inscription_view"
             android:label="@string/title_activity_inscription_view" >

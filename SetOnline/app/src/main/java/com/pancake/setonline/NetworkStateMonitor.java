@@ -10,19 +10,20 @@ import android.widget.Toast;
 /**
  * Created by Matthieu on 07/03/2015.
  */
-public class NetworkStateMonitor extends BroadcastReceiver {
+public class NetworkStateMonitor /*extends BroadcastReceiver*/ {
     /**
      * Cette fonction est appellée automatiquement lorsque la connexion du téléphone hôte change
      * @param context osef
      * @param intent osef
      */
+    /*
     public void onReceive(final Context context, final Intent intent) {
         if(haveNetworkConnection(context)){
             Toast.makeText(context, "Connecté à internet !", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(context, "Connexion perdue !", Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 
     /**
      * Test d'accès au réseau

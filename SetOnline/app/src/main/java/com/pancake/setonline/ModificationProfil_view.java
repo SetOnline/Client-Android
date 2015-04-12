@@ -16,8 +16,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+//import com.github.nkzawa.socketio.client.IO;
+//import com.github.nkzawa.socketio.client.Socket;
+
+import com.github.nkzawa.engineio.client.Socket;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,9 +35,6 @@ import java.net.URI;
 
 
 public class ModificationProfil_view extends ActionBarActivity {
-    // NodeJS
-    private Socket mSocket;
-
     private Button bt_loadAvatar;
     private Button bt_loadAvatarCamera;
     private ImageView ivAvatar;
@@ -54,15 +53,8 @@ public class ModificationProfil_view extends ActionBarActivity {
         setContentView(R.layout.activity_modification_profil_view);
 
         // nodeJS, gestion de la communication client/serveur
-        try {
-            mSocket = IO.socket(new URI("http://37.59.123.190:1337"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            //System.out.println("error initializing mSocket");
-            Toast.makeText(ModificationProfil_view.this, "Serveur hors ligne :(", Toast.LENGTH_LONG).show();
-        }
-
-        mSocket.connect();
+        SocketManager.initServerConnexion();
+        SocketManager.connectToServer();
 
         ivAvatar = (ImageView)findViewById(R.id.ivAvatar);
 
@@ -93,7 +85,7 @@ public class ModificationProfil_view extends ActionBarActivity {
                 profile_modification_packet.put(json_OldPsswd);
                 profile_modification_packet.put(json_NewPsswd);
 
-                mSocket.emit("Creation compte", profile_modification_packet.toString());
+                SocketManager.mSocketIO.emit("Creation compte", profile_modification_packet.toString());
 
                 // TODO : SEND NEW AVATAR
             }
@@ -237,8 +229,5 @@ public class ModificationProfil_view extends ActionBarActivity {
 
     public void onDestroy() {
         super.onDestroy();
-
-        // déconnexion du socket
-        mSocket.disconnect();
     }
 }

@@ -81,10 +81,10 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         if(!res) return false;
 
         // écoute des évènements
-        mSocket.on("Nouvelle partie", onNewGame);
-        mSocket.on("timer", onTimerUpdate);
-        mSocket.on("Set valide", onSetValide);
-        mSocket.on("Set invalide", onSetInvalide);
+        SocketManager.mSocketIO.on("Nouvelle partie", onNewGame);
+        SocketManager.mSocketIO.on("timer", onTimerUpdate);
+        SocketManager.mSocketIO.on("Set valide", onSetValide);
+        SocketManager.mSocketIO.on("Set invalide", onSetInvalide);
 
         return true;
     }
@@ -94,10 +94,10 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         super.shutDown();
 
         // arrêt de l'écoute des évenements serveur
-        mSocket.off("Nouvelle partie", onNewGame);
-        mSocket.off("timer", onTimerUpdate);
-        mSocket.off("Set valide", onSetValide);
-        mSocket.off("Set invalide", onSetInvalide);
+        SocketManager.mSocketIO.off("Nouvelle partie", onNewGame);
+        SocketManager.mSocketIO.off("timer", onTimerUpdate);
+        SocketManager.mSocketIO.off("Set valide", onSetValide);
+        SocketManager.mSocketIO.off("Set invalide", onSetInvalide);
     }
 
     @Override
@@ -134,6 +134,6 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
             return;
         }
 
-        mSocket.emit("Set", stringified); // émission de l'évènement set
+        SocketManager.mSocketIO.emit("Set", stringified); // émission de l'évènement set
     }
 }

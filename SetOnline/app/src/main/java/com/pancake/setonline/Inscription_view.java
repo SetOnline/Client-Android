@@ -1,13 +1,10 @@
 package com.pancake.setonline;
 
-import android.app.AlertDialog;
 import android.app.NotificationManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -21,8 +18,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+import com.github.nkzawa.engineio.client.Socket;
+//import com.github.nkzawa.socketio.client.IO;
+//import com.github.nkzawa.socketio.client.Socket;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,9 +49,6 @@ public class Inscription_view extends ActionBarActivity {
 
     private static final int ACTION_SELECT_PICTURE = 1;
     private static final int ACTION_TAKE_PHOTO = 2;
-
-    // NodeJS
-    private Socket mSocket;
 
     private Emitter.Listener onInscriptionResult = new Emitter.Listener() {
         public void call(final Object... args) {
@@ -118,19 +113,8 @@ public class Inscription_view extends ActionBarActivity {
         setContentView(R.layout.activity_inscription_view);
 
         // nodeJS, gestion de la communication client/serveur
-        try {
-            mSocket = IO.socket(new URI("http://37.59.123.190:1337"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            //System.out.println("error initializing mSocket");
-            Toast.makeText(Inscription_view.this, "Serveur hors ligne :(", Toast.LENGTH_LONG).show();
-        }
-
-        Profil_model.activateCookies(mSocket);
-
-        mSocket.connect();
-
-        mSocket.on("Resultat inscription", onInscriptionResult);
+        SocketManager.initServerConnexion();
+        SocketManager.connectToServer();
         // interface
 
         etPseudo = (EditText)findViewById(R.id.etPseudo);
@@ -211,7 +195,7 @@ public class Inscription_view extends ActionBarActivity {
                 inscription_packet.put(json_pseudo);
                 inscription_packet.put(json_psswd);
 
-                mSocket.emit("Creation compte", inscription_packet.toString());
+                SocketManager.mSocketIO.emit("Creation compte", inscription_packet.toString());
                 System.out.println("Creation compte");
             }
         });
@@ -331,11 +315,9 @@ public class Inscription_view extends ActionBarActivity {
 
     public void onDestroy() {
         super.onDestroy();
-        System.out.println("disconnect");
         // déconnexion du socket
-        mSocket.disconnect();
 
-        mSocket.off("Compte cree");
-        mSocket.off("Compte pas cree");
+        SocketManager.mSocketIO.off("Compte cree");
+        SocketManager.mSocketIO.off("Compte pas cree");
     }
 }

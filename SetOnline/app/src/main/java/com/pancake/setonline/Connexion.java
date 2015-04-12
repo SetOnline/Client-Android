@@ -1,7 +1,6 @@
 package com.pancake.setonline;
 
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
@@ -16,12 +15,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.engineio.client.transports.Polling;
+/*
 import com.github.nkzawa.engineio.client.transports.WebSocket;
 import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+import com.github.nkzawa.socketio.client.Manager;
+import com.github.nkzawa.socketio.client.Socket;*/
+
+import com.github.nkzawa.engineio.client.Socket;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +38,8 @@ import javax.net.ssl.SSLContext;
 
 public class Connexion extends ActionBarActivity {
     // NodeJS
-    private Socket mSocket;
+    //private Socket mSocket;
+    //com.github.nkzawa.socketio.client.Socket m_io_socket;
 
     private String nickname = null;
 
@@ -77,76 +81,8 @@ public class Connexion extends ActionBarActivity {
         AnimationDrawable animLoad = (AnimationDrawable)loading.getBackground();
         animLoad.start();
 
-        try {
-            mSocket = IO.socket(new URI("http://37.59.123.190:1337"));
-            //connect();
-            // interface
-
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        Profil_model.activateCookies(mSocket);
-
-        mSocket.on("Resultat connexion", onConnexionResult);
-
-        mSocket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
-
-            public void call(Object... args) {
-                //Log.d("ActivityName: ", "socket connected");
-                //Toast.makeText(Jeu.this, "Connection réussie !", Toast.LENGTH_LONG).show();
-                // emit anything you want here to the server
-                //socket.emit("login", some);
-                //socket.disconnect();
-                Exception err = (Exception)args[0];
-                System.out.println("EVENT_CONNECT_ERROR");
-                err.printStackTrace();
-            }
-
-            // this is the emit from the server
-        });
-
-        mSocket.on(Socket.EVENT_ERROR, new Emitter.Listener() {
-
-            public void call(Object... args) {
-                //Log.d("ActivityName: ", "socket connected");
-                //Toast.makeText(Jeu.this, "Connection réussie !", Toast.LENGTH_LONG).show();
-                // emit anything you want here to the server
-                //socket.emit("login", some);
-                //socket.disconnect();
-                Exception err = (Exception)args[0];
-                System.out.println("EVENT_ERROR");
-                err.printStackTrace();
-            }
-
-            // this is the emit from the server
-        });
-
-        mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-
-            public void call(Object... args) {
-                //Log.d("ActivityName: ", "socket connected");
-                //Toast.makeText(Jeu.this, "Connection réussie !", Toast.LENGTH_LONG).show();
-                // emit anything you want here to the server
-                //socket.emit("login", some);
-                //socket.disconnect();
-                System.out.println("CONNECTED " + args.length);
-                //System.out.println((String)args[0]);
-            }
-
-            // this is the emit from the server
-        });
-        mSocket.on(Socket.EVENT_MESSAGE, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                // receive binary data
-                byte[] data = (byte[])args[0];
-                System.out.println("RECEIVED DATA BINARY :");
-                System.out.println(data);
-            }
-        });
-
-        connect();
+        SocketManager.initServerConnexion();
+        SocketManager.connectToServer();
 
         ImageView btnSeConnecter = (ImageView)findViewById(R.id.ivConnect);
         btnSeConnecter.setOnClickListener(new View.OnClickListener() {
@@ -168,7 +104,7 @@ public class Connexion extends ActionBarActivity {
                     inscription_packet.put(json_psswd);
 
                     Toast.makeText(Connexion.this, "coucou ! connexion...", Toast.LENGTH_LONG).show();
-                    mSocket.emit("Connexion", inscription_packet.toString());
+                    SocketManager.mSocketIO.emit("Connexion", inscription_packet.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -189,7 +125,6 @@ public class Connexion extends ActionBarActivity {
             public void onClick(View v){
                 Intent intent = new Intent(getApplicationContext(), Inscription_view.class);
                 startActivity(intent);
-                disconnect();
             }
         });
 
@@ -225,23 +160,9 @@ public class Connexion extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void connect(){
-        System.out.println("Connect");
-        // nodeJS, gestion de la communication client/serveur
-
-        mSocket.connect();
-    }
-
-    public void disconnect(){
-        // déconnexion du socket
-        mSocket.disconnect();
-
-        mSocket.off("Resultat connexion");
-    }
-
     public void onDestroy() {
         super.onDestroy();
 
-        disconnect();
+        SocketManager.disconnectFromServer();
     }
 }
