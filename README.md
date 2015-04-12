@@ -16,7 +16,7 @@ Importer le projet dans Android Studio
 
 <h2>Remerciements</h2>
 <ul>
-<li>Naoyuki Kanezawa (librairie socket.io-client)</li>
+<li>Naoyuki Kanezawa (librairie socket.io-client & engine.io-client)</li>
 <li>Jeremy Feinstein (librairie SlidingMenu)</li>
 </ul>
 
