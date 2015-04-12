@@ -115,6 +115,7 @@ public class Inscription_view extends ActionBarActivity {
         // nodeJS, gestion de la communication client/serveur
         SocketManager.initServerConnexion();
         SocketManager.connectToServer();
+        SocketManager.mSocketIO.on("Resultat inscription", onInscriptionResult);
         // interface
 
         etPseudo = (EditText)findViewById(R.id.etPseudo);
@@ -317,7 +318,6 @@ public class Inscription_view extends ActionBarActivity {
         super.onDestroy();
         // déconnexion du socket
 
-        SocketManager.mSocketIO.off("Compte cree");
-        SocketManager.mSocketIO.off("Compte pas cree");
+        SocketManager.mSocketIO.off("Resultat inscription");
     }
 }
