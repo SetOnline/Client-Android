@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Display;
@@ -18,6 +19,7 @@ import org.json.*;
 
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -48,6 +50,9 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
 
     private boolean isPlaying = false;              // gestion de la 1ere partie non jouée
     private JeuType jeu;
+
+    private ImageView gbSet;
+    private CountDownTimer gbSetTimer;
 
     /**
      * Fonction appellée automatiquement pour chaque activité
@@ -95,6 +100,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
+        gbSet = (ImageView)findViewById(R.id.good_bad_set);
 
         // récupération de la liste des sets trouvés situés dans le panneau de droite
         lvSetsFound = (ListView)menuS.getSecondaryMenu().findViewById(R.id.list);
@@ -348,11 +354,11 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         try {
             String s = setCorrect; // récupération du Json stringifié contenant le set
             JSONArray data = new JSONArray(s);
-            for(int i = 0; i != 3; ++i){
+            for (int i = 0; i != 3; ++i) {
                 // récupération des 3 cartes formant le set
                 try {
                     newValidSet += data.getJSONObject(i).getString("value");
-                } catch(JSONException e){
+                } catch (JSONException e) {
                     e.printStackTrace();
                     System.out.println(e.getMessage());
                     return;
@@ -368,13 +374,27 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         //lv_foundSets.add(newValidSet);
         // on recrée l'adapteur des sets trouvés et on le remplit avec les sets précédemment trouvés
         String lst[] = new String[validSetsFound.size()];
-        for(int i = 0; i != validSetsFound.size(); ++i){
+        for (int i = 0; i != validSetsFound.size(); ++i) {
             lst[i] = validSetsFound.get(i);
         }
         lv_foundSets = new GameSetsListAdapter(getBaseContext(), lst);
         lvSetsFound.setAdapter(lv_foundSets);
 
         Toast.makeText(Jeu_view.this, "Set valide \\o/", Toast.LENGTH_LONG).show();
+
+        gbSet.setVisibility(View.VISIBLE);
+        gbSet.setBackgroundResource(R.drawable.good_set);
+        gbSetTimer = new CountDownTimer(2000, 100) {
+
+            public void onTick(long millisUntilFinished) {
+                gbSet.setAlpha(((float)millisUntilFinished) / 2000.0f);
+            }
+
+            public void onFinish() {
+                gbSet.setVisibility(View.INVISIBLE);
+            }
+        };
+        gbSetTimer.start();
     }
 
     /**
@@ -382,6 +402,22 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
      */
     public void onSetIncorrect(String setIncorrect) {
         Toast.makeText(Jeu_view.this, "Set invalide :(", Toast.LENGTH_LONG).show();
+        gbSet.setBackgroundResource(R.drawable.bad_set);
+
+        gbSet.setVisibility(View.VISIBLE);
+        gbSet.setBackgroundResource(R.drawable.bad_set);
+        gbSetTimer = new CountDownTimer(500, 10) {
+
+            public void onTick(long millisUntilFinished) {
+                gbSet.setAlpha(((float)millisUntilFinished) / 500.0f);
+            }
+
+
+            public void onFinish() {
+                gbSet.setVisibility(View.INVISIBLE);
+            }
+        };
+        gbSetTimer.start();
     }
 
     /**
