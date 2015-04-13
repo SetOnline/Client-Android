@@ -90,12 +90,17 @@ public class menuJeu_view extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onBackPressed() {
+        if(SocketManager.isNetGame) {
+            SocketManager.logout();
+            super.onBackPressed();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     //fonction appellée à la fermeture de l'activité
     public void onDestroy() {
         super.onDestroy();
-
-        //mSocket.disconnect();
-        //mSocket.off("Nouvelle partie", onNewGame);
-        //mSocket.off("timer", onTimerUpdate);
     }
 }
