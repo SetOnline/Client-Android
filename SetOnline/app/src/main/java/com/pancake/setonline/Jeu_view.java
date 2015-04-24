@@ -34,6 +34,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
     private TextView tvTimer;                       // affichage chronomètre
     private TextView tvNbSetsATrouver;              // affichage du nombre de sets restants
     private ImageButton ib[];                       // cartes de la partie en cours
+    private ImageView iv[];
     private String ibValue[];                       // valeurs des cartes
 
     private ListView lvSetsFound;                   // liste graphique des sets trouvés pour la partie en cours
@@ -111,6 +112,20 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         tvTimer = (TextView)findViewById(R.id.timer);
         tvNbSetsATrouver = (TextView)findViewById(R.id.tvSetsATrouver);
 
+        iv = new ImageView[12];
+        iv[0] = (ImageView)findViewById(R.id.imageView);
+        iv[1] = (ImageView)findViewById(R.id.imageView2);
+        iv[2] = (ImageView)findViewById(R.id.imageView3);
+        iv[3] = (ImageView)findViewById(R.id.imageView4);
+        iv[4] = (ImageView)findViewById(R.id.imageView5);
+        iv[5] = (ImageView)findViewById(R.id.imageView6);
+        iv[6] = (ImageView)findViewById(R.id.imageView7);
+        iv[7] = (ImageView)findViewById(R.id.imageView8);
+        iv[8] = (ImageView)findViewById(R.id.imageView9);
+        iv[9] = (ImageView)findViewById(R.id.imageView10);
+        iv[10] = (ImageView)findViewById(R.id.imageView11);
+        iv[11] = (ImageView)findViewById(R.id.imageView12);
+
         ib = new ImageButton[12];
         ibValue = new String[12];
 
@@ -130,6 +145,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         for(int i = 0; i != 12; ++i){
             ib[i].setOnClickListener(new cardButton(i));
             ib[i].setBackgroundResource(0);
+            iv[i].setBackgroundResource(0);
         }
 
         ivDifficultyStar1 = (ImageView)findViewById(R.id.ivDifficulty1);
@@ -181,9 +197,12 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
 
     // permet d'annuler la sélection des 3 cartes
     private void undoSelection() {
-        if(idSelectedCard1 > -1) ib[idSelectedCard1].setAlpha(1.0f);
+        /*if(idSelectedCard1 > -1) ib[idSelectedCard1].setAlpha(1.0f);
         if(idSelectedCard2 > -1) ib[idSelectedCard2].setAlpha(1.0f);
-        if(idSelectedCard3 > -1) ib[idSelectedCard3].setAlpha(1.0f);
+        if(idSelectedCard3 > -1) ib[idSelectedCard3].setAlpha(1.0f);*/
+        if(idSelectedCard1 > -1) iv[idSelectedCard1].setBackgroundResource(0);
+        if(idSelectedCard2 > -1) iv[idSelectedCard2].setBackgroundResource(0);
+        if(idSelectedCard3 > -1) iv[idSelectedCard3].setBackgroundResource(0);
 
         idSelectedCard1 = -1;
         idSelectedCard2 = -1;
@@ -197,27 +216,27 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
     private void selectCard(int i){
         if(idSelectedCard1 == i) {
             // désélection 1
-            ib[i].setAlpha(1.0f);
+            iv[i].setBackgroundResource(0);//ib[i].setAlpha(1.0f);
             idSelectedCard1 = -1;
         } else if(idSelectedCard2 == i){
             // désélection 2
-            ib[i].setAlpha(1.0f);
+            iv[i].setBackgroundResource(0);//ib[i].setAlpha(1.0f);
             idSelectedCard2 = -1;
         } else if(idSelectedCard3 == i){
             // désélection 3
-            ib[i].setAlpha(1.0f);
+            iv[i].setBackgroundResource(0);//ib[i].setAlpha(1.0f);
             idSelectedCard3 = -1;
         } else if(idSelectedCard1 == -1){
             // sélection 1
-            ib[i].setAlpha(0.4f);
+            iv[i].setBackgroundResource(R.drawable.card_selection);//ib[i].setAlpha(0.4f);
             idSelectedCard1 = i;
         } else if(idSelectedCard2 == -1){
             // sélection 2
-            ib[i].setAlpha(0.4f);
+            iv[i].setBackgroundResource(R.drawable.card_selection);//ib[i].setAlpha(0.4f);
             idSelectedCard2 = i;
         } else if(idSelectedCard3 == -1){
             // sélection 3
-            ib[i].setAlpha(0.4f);
+            iv[i].setBackgroundResource(R.drawable.card_selection);//ib[i].setAlpha(0.4f);
             idSelectedCard3 = i;
             jeu.sendSet(ibValue[idSelectedCard1] + ibValue[idSelectedCard2] + ibValue[idSelectedCard3]);
             undoSelection();
