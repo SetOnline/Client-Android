@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.content.Intent;
 
 public class menuJeu_view extends ActionBarActivity {
-
     /**
      * Fonction appellée automatiquement pour chaque activité
      * @param savedInstanceState
@@ -22,9 +21,9 @@ public class menuJeu_view extends ActionBarActivity {
         setContentView(R.layout.activity_accueil);
 
         // vérification de la présence d'une connexion data/wifi, dans le cas où il n'y a aucune connexion, redirection vers le menu wifi
-        if(!NetworkStateMonitor.haveNetworkConnection(this.getBaseContext())){
+        /*if(!NetworkStateMonitor.haveNetworkConnection(this.getBaseContext())){
             startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-        }
+        }*/
 
         // définition des trois boutons
         Button btnJouer = (Button)findViewById(R.id.buttonJouer);

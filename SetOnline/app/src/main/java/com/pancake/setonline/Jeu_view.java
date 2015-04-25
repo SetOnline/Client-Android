@@ -55,6 +55,8 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
     private ImageView gbSet;
     private CountDownTimer gbSetTimer;
 
+    private int nbSetsRestants = 0;
+
     /**
      * Fonction appellée automatiquement pour chaque activité
      * @param savedInstanceState
@@ -331,6 +333,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
             }
             try{
                 tvNbSetsATrouver.setText(data.getJSONObject(12).getString("value") + " sets trouvables !"); // affichage du nombre de sets trouvables pour la partie en cours
+                nbSetsRestants = Integer.parseInt(data.getJSONObject(12).getString("value"));
 
                 // affichage de la difficulé
                 int nbFoundableSets =Integer.parseInt(data.getJSONObject(12).getString("value"));
@@ -370,6 +373,12 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
      */
     public void onSetCorrect(String setCorrect) {
         String newValidSet = "";
+        nbSetsRestants--;
+        if(nbSetsRestants == 0){
+            tvNbSetsATrouver.setText("GG !");
+        } else {
+            tvNbSetsATrouver.setText(nbSetsRestants + " sets restants !");
+        }
         try {
             String s = setCorrect; // récupération du Json stringifié contenant le set
             JSONArray data = new JSONArray(s);
