@@ -103,9 +103,6 @@ public class Classement extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Adapter : représente une ligne dans la liste des sets trouvés
-     */
     private class GameClassementListAdapter extends ArrayAdapter<String> {
 
         public View getView(int position, View convertView, ViewGroup parent) {

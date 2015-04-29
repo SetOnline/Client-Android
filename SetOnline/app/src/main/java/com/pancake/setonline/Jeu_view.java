@@ -26,6 +26,7 @@ import android.widget.Toast;
 import android.widget.TextView;
 import android.widget.ImageButton;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
     // gestionnaire des panneaux
@@ -56,6 +57,9 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
     private CountDownTimer gbSetTimer;
 
     private int nbSetsRestants = 0;
+
+    private ListView lv_classement;
+    private GameClassementListAdapter lv_adapter_classement;
 
     /**
      * Fonction appellée automatiquement pour chaque activité
@@ -102,7 +106,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         //Home as up display
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
+        lv_classement = (ListView)findViewById(R.id.lvClassement);
         gbSet = (ImageView)findViewById(R.id.good_bad_set);
 
         // récupération de la liste des sets trouvés situés dans le panneau de droite
@@ -363,6 +367,15 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         }
     }
 
+    public void updateClassement(String[] cls){
+        for(String s : cls){
+            System.out.println("add : " + s);
+        }
+
+        lv_adapter_classement = new GameClassementListAdapter(getBaseContext(), cls);
+        lv_classement.setAdapter(lv_adapter_classement);
+    }
+
     /**
      * évènement récupération d'un set valide
      * Données au format Json:
@@ -498,6 +511,37 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         }
 
         public GameSetsListAdapter(Context context, String[] values) {
+            super(context, R.layout.set_row_layout, values);
+        }
+    }
+
+    private class GameClassementListAdapter extends ArrayAdapter<String> {
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater)
+                    getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            View rowView = inflater.inflate(R.layout.classement_row_layout, parent, false);
+
+            // récupération de la ligne (pseudo + score)
+            TextView tvPseudo = (TextView) rowView.findViewById(R.id.tv_crl_pseudo);
+            TextView tvScore = (TextView) rowView.findViewById(R.id.tv_crl_score);
+
+            // récupération des numéros des cartes du ième set trouvé
+            String data[] = getItem(position).split("\n");
+            String pseudo = data[0];
+            String score = data[1];
+
+            if(convertView == null ) {
+                tvPseudo.setText(pseudo);
+                tvScore.setText(score);
+            }else
+                rowView = (View)convertView;
+
+            return rowView;
+        }
+
+        public GameClassementListAdapter(Context context, String[] values) {
             super(context, R.layout.set_row_layout, values);
         }
     }

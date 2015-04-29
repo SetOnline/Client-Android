@@ -2,6 +2,7 @@ package com.pancake.setonline;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -10,10 +11,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 /**
  * Created by Matthieu on 21/03/2015.
  */
 public class JeuTypeVitesseOnline extends JeuTypeOnline {
+    protected CountDownTimer cdtUpdateClassement;
     /**
      * évènement nouvelle partie
      * Données au format Json:
@@ -76,6 +80,33 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         }
     };
 
+    private Emitter.Listener onClassementUpdate = new Emitter.Listener() {
+        public void call(final Object... args) {
+            act.runOnUiThread(new Runnable() {
+                public void run() {
+                    //HashMap<String, Integer> c = new HashMap<String, Integer>();
+                    String[] c = null;
+
+                    try {
+                        System.out.println((String) args[0]);
+                        JSONArray data = new JSONArray((String) args[0]);
+                        c = new String[data.length()];
+                        for(int i = 0; i != data.length(); ++i){
+                            JSONObject jso = data.getJSONObject(i);
+
+                            //c.put(jso.getString("name"), jso.getInt("value"));
+                            c[i] = jso.getString("rank") + " : " + jso.getString("name") + "\n" + jso.getInt("value");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    fenetreJeu.updateClassement(c);
+                }
+            });
+        }
+    };
+
     public boolean init(IJeu_receiver fj, Activity a){
         boolean res = super.init(fj, a);
         if(!res) return false;
@@ -85,6 +116,24 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         SocketManager.mSocketIO.on("timer", onTimerUpdate);
         SocketManager.mSocketIO.on("Set valide", onSetValide);
         SocketManager.mSocketIO.on("Set invalide", onSetInvalide);
+        SocketManager.mSocketIO.on("Reponse classement partie actuelle", onClassementUpdate);
+
+
+        // timer
+        cdtUpdateClassement = new CountDownTimer(1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                //fenetreJeu.onGameTimerUpdate((int)millisUntilFinished / 1000);
+                SocketManager.mSocketIO.emit("Demande classement partie actuelle");
+                System.out.println("Demande classement partie actuelle");
+            }
+
+
+            public void onFinish() {
+                this.start();
+            }
+        };
+        cdtUpdateClassement.start();
 
         return true;
     }

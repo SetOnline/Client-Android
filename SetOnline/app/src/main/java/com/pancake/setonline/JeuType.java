@@ -1,23 +1,6 @@
 package com.pancake.setonline;
 
 import android.app.Activity;
-import android.content.Context;
-import android.os.Environment;
-import android.webkit.CookieManager;
-import android.widget.Toast;
-
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.engineio.client.Transport;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
 
 /**
  * Created by Matthieu on 21/03/2015.
