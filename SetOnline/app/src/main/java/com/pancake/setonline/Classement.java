@@ -130,7 +130,7 @@ public class Classement extends ActionBarActivity {
         }
 
         public GameClassementListAdapter(Context context, String[] values) {
-            super(context, R.layout.set_row_layout, values);
+            super(context, R.layout.classement_row_layout, values);
         }
     }
 

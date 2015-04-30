@@ -4,19 +4,107 @@ import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.TextView;
+
+import com.github.nkzawa.emitter.Emitter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 
 public class Profil extends ActionBarActivity {
     private TabHost myTabHost;
     private float lastSwipePosX = 0.f;
+
+    private ListView lvFriends;
+    private FriendListAdapter lv_adapter_friends;
+
+    private ListView lvMedals;
+    private TrophyListAdapter lv_adapter_medals;
+
+    private ListView lvTrophies;
+    private TrophyListAdapter lv_adapter_trophies;
+
+    private Emitter.Listener onGetListeAmis = new Emitter.Listener() {
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    String newList[];
+                    try {
+                        JSONArray ja = new JSONArray((String)args[0]);
+                        newList = new String[ja.length()];
+
+                        for(int i = 0; i != ja.length(); ++i){
+                            newList[i] = ja.getJSONObject(i).getString("name") + "\n" + (ja.getJSONObject(i).getBoolean("status") ? "1" : "0");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    lv_adapter_friends = new FriendListAdapter(getBaseContext(), newList);
+                    lvFriends.setAdapter(lv_adapter_friends);
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onGetListeTrophees = new Emitter.Listener() {
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    try {
+                        JSONArray ja = new JSONArray((String)args[0]);
+                        String newList[] = new String[ja.length()];
+
+                        for(int i = 0; i != ja.length(); ++i){
+                            newList[i] = ja.getJSONObject(i).getString("pic") + "\n" + ja.getJSONObject(i).getString("desc");
+                        }
+
+                        lv_adapter_trophies = new TrophyListAdapter(getBaseContext(), newList);
+                        lvTrophies.setAdapter(lv_adapter_trophies);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onGetListeMedailles = new Emitter.Listener() {
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    try {
+                        JSONArray ja = new JSONArray((String)args[0]);
+                        String newList[] = new String[ja.length()];
+
+                        for(int i = 0; i != ja.length(); ++i){
+                            newList[i] = ja.getJSONObject(i).getString("pic") + "\n" + ja.getJSONObject(i).getString("desc");
+                        }
+
+                        lv_adapter_medals = new TrophyListAdapter(getBaseContext(), newList);
+                        lvMedals.setAdapter(lv_adapter_medals);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +134,19 @@ public class Profil extends ActionBarActivity {
         myTabHost.addTab(device_tab_spec);
 
         myTabHost.setOnTabChangedListener(new AnimatedTabHostListener(getBaseContext(), myTabHost));
+
+        lvFriends = (ListView)findViewById(R.id.lvFriends);
+        lvMedals = (ListView)findViewById(R.id.lvMedals);
+        lvTrophies = (ListView)findViewById(R.id.lvTrophies);
+
+        // NodeJS
+        SocketManager.mSocketIO.on("Reponse liste amis", onGetListeAmis);
+        SocketManager.mSocketIO.on("Reponse liste trophees", onGetListeTrophees);
+        SocketManager.mSocketIO.on("Reponse liste medailles", onGetListeMedailles);
+
+        SocketManager.mSocketIO.emit("Demande liste amis");
+        SocketManager.mSocketIO.emit("Demande liste trophees");
+        SocketManager.mSocketIO.emit("Demande liste medailles");
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -194,6 +295,64 @@ public class Profil extends ActionBarActivity {
                 tabHost.setCurrentTab(newTab);
                 return super.onFling(event1, event2, velocityX, velocityY);
             }
+        }
+    }
+
+    private class FriendListAdapter extends ArrayAdapter<String> {
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater)
+                    getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            View rowView = inflater.inflate(R.layout.ami_row_layout, parent, false);
+
+            TextView tvPseudo = (TextView) rowView.findViewById(R.id.tvPseudoAmi);
+            ImageView ivConnected = (ImageView) rowView.findViewById(R.id.ivConnected);
+
+            String data[] = getItem(position).split("\n");
+            String pseudo = data[0];
+            boolean connected = (data[1].charAt(0) == '1');
+
+            if(convertView == null ) {
+                tvPseudo.setText(pseudo);
+                if(connected) ivConnected.setBackgroundResource(R.drawable.ic_connected);
+            } else
+                rowView = (View)convertView;
+
+            return rowView;
+        }
+
+        public FriendListAdapter(Context context, String[] values) {
+            super(context, R.layout.ami_row_layout, values);
+        }
+    }
+
+    private class TrophyListAdapter extends ArrayAdapter<String> {
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater)
+                    getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            View rowView = inflater.inflate(R.layout.trophee_row_layout, parent, false);
+
+            ImageView ivTropPic = (ImageView)rowView.findViewById(R.id.ivTropheePic);
+            TextView tvTropDesc = (TextView)rowView.findViewById(R.id.tvTropheeDesc);
+
+            String data[] = getItem(position).split("\n");
+            String picName = data[0];
+            String Desc = data[1];
+
+            if(convertView == null ) {
+                tvTropDesc.setText(Desc);
+                ivTropPic.setBackgroundResource(getResources().getIdentifier(picName, "drawable", getPackageName()));
+            } else
+                rowView = (View)convertView;
+
+            return rowView;
+        }
+
+        public TrophyListAdapter(Context context, String[] values) {
+            super(context, R.layout.trophee_row_layout, values);
         }
     }
 }

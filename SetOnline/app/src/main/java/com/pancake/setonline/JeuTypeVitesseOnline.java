@@ -61,7 +61,7 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         public void call(final Object... args) {
             act.runOnUiThread(new Runnable() {
                 public void run() {
-                    fenetreJeu.onSetCorrect((String) args[0]);
+                fenetreJeu.onSetCorrect((String) args[0]);
                 }
             });
         }
@@ -74,7 +74,7 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         public void call(final Object... args) {
             act.runOnUiThread(new Runnable() {
                 public void run() {
-                fenetreJeu.onSetIncorrect((String) args[0]);
+                    fenetreJeu.onSetIncorrect((String) args[0]);
                 }
             });
         }
@@ -127,7 +127,6 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
                 SocketManager.mSocketIO.emit("Demande classement partie actuelle");
                 System.out.println("Demande classement partie actuelle");
             }
-
 
             public void onFinish() {
                 this.start();

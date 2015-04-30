@@ -9,4 +9,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Amis :"
         android:id="@+id/tvFriends" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/lvFriends" />
 </LinearLayout>

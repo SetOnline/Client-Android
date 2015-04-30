@@ -1,6 +1,8 @@
 package com.pancake.setonline;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
@@ -11,7 +13,53 @@ import android.view.View;
 import android.widget.Button;
 import android.content.Intent;
 
+import com.github.nkzawa.emitter.Emitter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class menuJeu_view extends ActionBarActivity {
+
+    private Emitter.Listener onGetNewFriendDemands = new Emitter.Listener() {
+        public void call(final Object... args) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                try {
+                    JSONArray ja = new JSONArray((String)args[0]);
+
+                    for(int i = 0; i != ja.length(); ++i){
+                        final JSONObject jo = ja.getJSONObject(i);
+                        final String ps = jo.getString("name");
+
+                        AlertDialog.Builder dlgAddFriend = new AlertDialog.Builder(menuJeu_view.this);
+                        dlgAddFriend.setMessage(ps + " aimerait être votre ami. Accepter ?");
+                        dlgAddFriend.setTitle("App Title");
+                        dlgAddFriend.setPositiveButton("Oui", new DialogInterface.OnClickListener(){
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SocketManager.mSocketIO.emit("Accepter ami", ps);
+                            }
+                        });
+                        dlgAddFriend.setNegativeButton("Non", new DialogInterface.OnClickListener(){
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SocketManager.mSocketIO.emit("Refuser ami", ps);
+                            }
+                        });
+                        dlgAddFriend.setCancelable(false);
+                        dlgAddFriend.create().show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        }
+    };
+
     /**
      * Fonction appellée automatiquement pour chaque activité
      * @param savedInstanceState
@@ -63,6 +111,9 @@ public class menuJeu_view extends ActionBarActivity {
                     finish();
                 }
             });
+
+            SocketManager.mSocketIO.on("Reponse liste demandes amis", onGetNewFriendDemands);
+            SocketManager.mSocketIO.emit("Demande liste demandes amis");
         } else {
             btnDeconnexion.setVisibility(View.INVISIBLE);
         }
