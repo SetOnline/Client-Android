@@ -315,9 +315,8 @@ public class Inscription_view extends ActionBarActivity {
     }
 
     public void onDestroy() {
-        super.onDestroy();
-        // déconnexion du socket
-
         SocketManager.mSocketIO.off("Resultat inscription");
+
+        super.onDestroy();
     }
 }

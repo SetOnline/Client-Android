@@ -135,9 +135,8 @@ public class Classement extends ActionBarActivity {
     }
 
     public void onDestroy() {
-        super.onDestroy();
-
-        // déconnexion du socket
         SocketManager.mSocketIO.off("Reponse classement");
+
+        super.onDestroy();
     }
 }

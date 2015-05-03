@@ -10,8 +10,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.content.Intent;
+import android.widget.RelativeLayout;
 
 import com.github.nkzawa.emitter.Emitter;
 
@@ -34,17 +36,15 @@ public class menuJeu_view extends ActionBarActivity {
 
                         AlertDialog.Builder dlgAddFriend = new AlertDialog.Builder(menuJeu_view.this);
                         dlgAddFriend.setMessage(ps + " aimerait être votre ami. Accepter ?");
-                        dlgAddFriend.setTitle("App Title");
+                        dlgAddFriend.setTitle("Set!");
                         dlgAddFriend.setPositiveButton("Oui", new DialogInterface.OnClickListener(){
 
-                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 SocketManager.mSocketIO.emit("Accepter ami", ps);
                             }
                         });
                         dlgAddFriend.setNegativeButton("Non", new DialogInterface.OnClickListener(){
 
-                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 SocketManager.mSocketIO.emit("Refuser ami", ps);
                             }
@@ -54,6 +54,7 @@ public class menuJeu_view extends ActionBarActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    return;
                 }
             }
         });
@@ -88,14 +89,6 @@ public class menuJeu_view extends ActionBarActivity {
             }
         });
 
-        btnProfil.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Profil.class);
-                startActivity(intent);
-            }
-        });
-
         btnClassement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,15 +100,26 @@ public class menuJeu_view extends ActionBarActivity {
             btnDeconnexion.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SocketManager.logout();
-                    finish();
+                    onBackPressed();
+                }
+            });
+
+            btnProfil.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), Profil.class);
+                    startActivity(intent);
                 }
             });
 
             SocketManager.mSocketIO.on("Reponse liste demandes amis", onGetNewFriendDemands);
             SocketManager.mSocketIO.emit("Demande liste demandes amis");
+
         } else {
             btnDeconnexion.setVisibility(View.INVISIBLE);
+
+            btnProfil.setBackgroundResource(R.drawable.button_grise);
+            btnProfil.setClickable(false);
         }
     }
 
@@ -151,6 +155,8 @@ public class menuJeu_view extends ActionBarActivity {
 
     //fonction appellée à la fermeture de l'activité
     public void onDestroy() {
+        SocketManager.mSocketIO.off("Reponse liste demandes amis");
+
         super.onDestroy();
     }
 }

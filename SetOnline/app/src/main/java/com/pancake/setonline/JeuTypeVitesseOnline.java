@@ -146,6 +146,7 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         SocketManager.mSocketIO.off("timer", onTimerUpdate);
         SocketManager.mSocketIO.off("Set valide", onSetValide);
         SocketManager.mSocketIO.off("Set invalide", onSetInvalide);
+        SocketManager.mSocketIO.off("Reponse classement partie actuelle");
     }
 
     @Override

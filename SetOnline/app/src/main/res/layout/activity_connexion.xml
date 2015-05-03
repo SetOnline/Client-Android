@@ -11,13 +11,14 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="wrap_content"
+        android:id="@+id/linlay1">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ivConnectionGameIcon"
-            android:src="@drawable/ic_launcher2"
+            android:src="@drawable/ic_game"
             android:layout_gravity="center"/>
 
         <TextView
@@ -32,15 +33,16 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="center_vertical">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linlay1">
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/login"
             android:hint="Login"
-            android:editable="true" />
+            android:editable="true"
+            android:singleLine="true" />
 
         <TableRow
             android:layout_width="wrap_content"
@@ -61,7 +63,8 @@
                     android:editable="true"
                     android:layout_toLeftOf="@+id/ivConnect"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="true"
+                    android:singleLine="true" />
 
                 <ImageView
                     android:layout_width="40dp"

@@ -10,8 +10,36 @@
         android:text="Amis :"
         android:id="@+id/tvFriends" />
 
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/etAddFriendName"
+            android:layout_toLeftOf="@+id/ivAddNewFriend"
+            android:layout_toStartOf="@+id/ivAddNewFriend"
+            android:hint="Pseudo"
+            android:editable="true"
+            android:singleLine="true" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/ivAddNewFriend"
+            android:src="@drawable/bt_connect"
+            android:clickable="true"
+            android:gravity="right"
+            android:layout_gravity="right"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/lvFriends" />
+
 </LinearLayout>

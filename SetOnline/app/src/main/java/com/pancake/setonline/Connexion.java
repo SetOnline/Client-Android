@@ -1,18 +1,24 @@
 package com.pancake.setonline;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,6 +92,16 @@ public class Connexion extends ActionBarActivity {
         SocketManager.initServerConnexion();
         SocketManager.connectToServer();
 
+        // TEST
+        /*LayoutInflater inflater = getLayoutInflater();
+        View dialoglayout = inflater.inflate(R.layout.dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog dialog = builder.create();
+        dialog.setView(dialoglayout);
+        dialog.getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.dialog_background));
+        dialog.setCancelable(true);
+        dialog.show();*/
+        //
         SocketManager.mSocketIO.on("Resultat connexion", onConnexionResult);
 
         ImageView btnSeConnecter = (ImageView)findViewById(R.id.ivConnect);
@@ -166,9 +182,10 @@ public class Connexion extends ActionBarActivity {
     }
 
     public void onDestroy() {
-        super.onDestroy();
-
+        SocketManager.mSocketIO.off("Resultat connexion");
         SocketManager.disconnectFromServer();
         SocketManager.destroyCookies();
+
+        super.onDestroy();
     }
 }

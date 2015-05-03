@@ -1,6 +1,10 @@
 package com.pancake.setonline;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -14,15 +18,19 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.engineio.client.Socket;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.io.File;
 
 
 public class Profil extends ActionBarActivity {
@@ -37,6 +45,11 @@ public class Profil extends ActionBarActivity {
 
     private ListView lvTrophies;
     private TrophyListAdapter lv_adapter_trophies;
+
+    private ImageView ivPlayerAvatar;
+
+    private ImageView ivAddNewFriend;
+    private EditText etNewFriendName;
 
     private Emitter.Listener onGetListeAmis = new Emitter.Listener() {
         public void call(final Object... args) {
@@ -106,6 +119,32 @@ public class Profil extends ActionBarActivity {
         }
     };
 
+    private Emitter.Listener onReponseDemandeAmi = new Emitter.Listener() {
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    System.out.println("Reponse demande ami");
+                    int i = (Integer)args[0];
+                    if(i == 1){
+                        AlertDialog.Builder dlgAddFriend = new AlertDialog.Builder(Profil.this);
+                        dlgAddFriend.setMessage("Demande envoyée");
+                        dlgAddFriend.setTitle("Set!");
+                        dlgAddFriend.setPositiveButton("OK", null);
+                        dlgAddFriend.setCancelable(false);
+                        dlgAddFriend.create().show();
+                    } else {
+                        AlertDialog.Builder dlgAddFriend = new AlertDialog.Builder(Profil.this);
+                        dlgAddFriend.setMessage("Échec de la demande");
+                        dlgAddFriend.setTitle("Set!");
+                        dlgAddFriend.setPositiveButton("OK", null);
+                        dlgAddFriend.setCancelable(false);
+                        dlgAddFriend.create().show();
+                    }
+                }
+            });
+        }
+    };
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
@@ -135,11 +174,31 @@ public class Profil extends ActionBarActivity {
 
         myTabHost.setOnTabChangedListener(new AnimatedTabHostListener(getBaseContext(), myTabHost));
 
+        ivPlayerAvatar = (ImageView)findViewById(R.id.ivProfilPlayerAvatar);
+
+        File imgFile = new  File(Profil_model.getAvatarFilename());
+
+        if(imgFile.exists()){
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            ivPlayerAvatar.setImageBitmap(myBitmap);
+        }
+
+        ivAddNewFriend = (ImageView)findViewById(R.id.ivAddNewFriend);
+        etNewFriendName = (EditText)findViewById(R.id.etAddFriendName);
+
         lvFriends = (ListView)findViewById(R.id.lvFriends);
         lvMedals = (ListView)findViewById(R.id.lvMedals);
         lvTrophies = (ListView)findViewById(R.id.lvTrophies);
 
         // NodeJS
+
+        ivAddNewFriend.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                SocketManager.mSocketIO.emit("Demander ami", etNewFriendName.getText().toString());
+            }
+        });
+
+        SocketManager.mSocketIO.on("Reponse demande ami", onReponseDemandeAmi);
         SocketManager.mSocketIO.on("Reponse liste amis", onGetListeAmis);
         SocketManager.mSocketIO.on("Reponse liste trophees", onGetListeTrophees);
         SocketManager.mSocketIO.on("Reponse liste medailles", onGetListeMedailles);
@@ -194,6 +253,13 @@ public class Profil extends ActionBarActivity {
         return false;
     }
 
+    public void onDestroy(){
+        SocketManager.mSocketIO.off("Reponse liste amis");
+        SocketManager.mSocketIO.off("Reponse liste trophees");
+        SocketManager.mSocketIO.off("Reponse liste medailles");
+        SocketManager.mSocketIO.off("Reponse demande ami");
+        super.onDestroy();
+    }
 
     /////////////////////////////////
     // TAB ANIMATION MANAGEMENT
