@@ -55,7 +55,7 @@ public class Connexion extends ActionBarActivity {
     private Button btRegistration;
     private Button btAnonymousGame;
 
-    private ImageView loading;
+    //private ImageView loading;
 
     private Emitter.Listener onConnexionResult = new Emitter.Listener() {
         public void call(final Object... args) {
@@ -85,10 +85,10 @@ public class Connexion extends ActionBarActivity {
         etNickname = (EditText)findViewById(R.id.login);
         etPassword = (EditText)findViewById(R.id.mdp);
 
-        loading = (ImageView)findViewById(R.id.ivLoading);
+        /*loading = (ImageView)findViewById(R.id.ivLoading);
         loading.setBackgroundResource(R.drawable.load_animation);
         AnimationDrawable animLoad = (AnimationDrawable)loading.getBackground();
-        animLoad.start();
+        animLoad.start();*/
 
         SocketManager.destroyCookies();
         SocketManager.initServerConnexion();

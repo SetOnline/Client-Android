@@ -72,9 +72,13 @@ public class Inscription_view extends ActionBarActivity {
                             // Builds the notification and issues it.
                             mNotifyMgr.notify(mNotificationId, mBuilder.build());*/
 
-                            SocketManager.isNetGame = true;
-                            Intent intent = new Intent(getApplicationContext(), menuJeu_view.class);
-                            startActivity(intent);
+                            //SocketManager.isNetGame = true;
+                            //Intent intent = new Intent(getApplicationContext(), menuJeu_view.class);
+                            //startActivity(intent);
+                            Intent newIntent = new Intent(Inscription_view.this, Connexion.class);
+                            newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(newIntent);
                         } else {
                             if(!adresse_mail){
                                 Toast.makeText(Inscription_view.this, getString(R.string.error_invalid_mail), Toast.LENGTH_LONG).show();

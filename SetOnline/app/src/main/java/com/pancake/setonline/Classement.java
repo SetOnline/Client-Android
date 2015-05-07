@@ -109,7 +109,7 @@ public class Classement extends ActionBarActivity {
                     }
 
                     lv_adapter_classement_sem = new GameClassementListAdapter(getBaseContext(), newList);
-                    lv_classement_sem.setAdapter(lv_adapter_classement);
+                    lv_classement_sem.setAdapter(lv_adapter_classement_sem);
                 }
             });
         }
@@ -148,7 +148,7 @@ public class Classement extends ActionBarActivity {
                     }
 
                     lv_adapter_classement_jour = new GameClassementListAdapter(getBaseContext(), newList);
-                    lv_classement_jour.setAdapter(lv_adapter_classement);
+                    lv_classement_jour.setAdapter(lv_adapter_classement_jour);
                 }
             });
         }

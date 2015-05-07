@@ -1,47 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tablelayout"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:stretchColumns="0"
-    android:orientation="horizontal">
-
-    <TableRow android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-        <TextView
-            android:id="@+id/tv_crl_pseudo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Pseudo"
-            android:textAppearance="?android:attr/textAppearanceLarge">
-        </TextView>
-        <View
-            android:layout_width="2dp"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:background="#FF444444" />
-        <TextView
-            android:id="@+id/tv_crl_score"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Score"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_marginLeft="4dp">
-        </TextView>
-    </TableRow>
-    <TableRow
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="wrap_content" android:layout_width="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="fill_parent">
 
-        <View
-            android:id="@+id/line1"
-            android:layout_width="wrap_content"
-            android:layout_height="1dip"
-            android:layout_weight="1"
-            android:background="#FF909090"
-            android:padding="2dip" />
-    </TableRow>
-</TableLayout>
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/ivBoom" />
+
+    </LinearLayout>
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tablelayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="0"
+        android:orientation="horizontal">
+
+        <TableRow android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/tv_crl_pseudo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Pseudo"
+                android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            <View
+                android:layout_width="2dp"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:background="#FF444444" />
+            <TextView
+                android:id="@+id/tv_crl_score"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Score"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_marginLeft="4dp">
+            </TextView>
+        </TableRow>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <View
+                android:id="@+id/line1"
+                android:layout_width="wrap_content"
+                android:layout_height="1dip"
+                android:layout_weight="1"
+                android:background="#FF909090"
+                android:padding="2dip" />
+        </TableRow>
+
+
+    </TableLayout>
+</RelativeLayout>

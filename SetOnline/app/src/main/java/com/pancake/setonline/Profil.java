@@ -2,6 +2,7 @@ package com.pancake.setonline;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
@@ -30,6 +31,7 @@ import com.github.nkzawa.engineio.client.Socket;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,6 +59,44 @@ public class Profil extends ActionBarActivity {
 
     protected CountDownTimer cdtRefreshFriendList;
     private int refresh_freq = 10000;
+
+    private Emitter.Listener onGetNewFriendDemands = new Emitter.Listener() {
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    try {
+                        JSONArray ja = new JSONArray((String)args[0]);
+
+                        for(int i = 0; i != ja.length(); ++i){
+                            final JSONObject jo = ja.getJSONObject(i);
+                            final String ps = jo.getString("name");
+
+                            AlertDialog.Builder dlgAddFriend = new AlertDialog.Builder(Profil.this);
+                            dlgAddFriend.setMessage(ps + " aimerait être votre ami. Accepter ?");
+                            dlgAddFriend.setTitle("Set!");
+                            dlgAddFriend.setPositiveButton("Oui", new DialogInterface.OnClickListener(){
+
+                                public void onClick(DialogInterface dialog, int which) {
+                                    SocketManager.mSocketIO.emit("Accepter ami", ps);
+                                }
+                            });
+                            dlgAddFriend.setNegativeButton("Non", new DialogInterface.OnClickListener(){
+
+                                public void onClick(DialogInterface dialog, int which) {
+                                    SocketManager.mSocketIO.emit("Refuser ami", ps);
+                                }
+                            });
+                            dlgAddFriend.setCancelable(false);
+                            dlgAddFriend.create().show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+                }
+            });
+        }
+    };
 
     private Emitter.Listener onGetListeAmis = new Emitter.Listener() {
         public void call(final Object... args) {
@@ -212,7 +252,9 @@ public class Profil extends ActionBarActivity {
         SocketManager.mSocketIO.on("Reponse liste amis", onGetListeAmis);
         SocketManager.mSocketIO.on("Reponse liste trophees", onGetListeTrophees);
         SocketManager.mSocketIO.on("Reponse liste medailles", onGetListeMedailles);
+        SocketManager.mSocketIO.on("Reponse liste demandes amis", onGetNewFriendDemands);
 
+        SocketManager.mSocketIO.emit("Demande liste demandes amis");
         SocketManager.mSocketIO.emit("Demande liste amis");
         SocketManager.mSocketIO.emit("Demande liste trophees");
         SocketManager.mSocketIO.emit("Demande liste medailles");
@@ -227,6 +269,7 @@ public class Profil extends ActionBarActivity {
 
             public void onFinish() {
                 SocketManager.mSocketIO.emit("Demande liste amis");
+                SocketManager.mSocketIO.emit("Demande liste demandes amis");
                 this.start();
             }
         };

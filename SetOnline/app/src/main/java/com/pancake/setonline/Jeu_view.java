@@ -636,6 +636,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
             // récupération de la ligne (pseudo + score)
             TextView tvPseudo = (TextView) rowView.findViewById(R.id.tv_crl_pseudo);
             TextView tvScore = (TextView) rowView.findViewById(R.id.tv_crl_score);
+            ImageView ivBoom = (ImageView)rowView.findViewById(R.id.ivBoom);
 
             // récupération des numéros des cartes du ième set trouvé
             String data[] = getItem(position).split("\n");
@@ -648,6 +649,8 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
 
                 tvPseudo.setTypeface(font);
                 tvScore.setTypeface(font);
+
+                ivBoom.setBackgroundResource(R.drawable.ic_rank);
             }else
                 rowView = (View)convertView;
 
