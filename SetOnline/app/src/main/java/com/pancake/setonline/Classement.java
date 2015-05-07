@@ -2,6 +2,7 @@ package com.pancake.setonline;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -237,6 +238,12 @@ public class Classement extends ActionBarActivity {
                 tvScore.setText(score);
             }else
                 rowView = (View)convertView;
+
+            if (position % 2 == 0) {
+                rowView.setBackgroundColor(Color.argb(255, 205, 163, 104));
+            } /*else {
+                rowView.setBackgroundColor(Color.CYAN);
+            }*/
 
             return rowView;
         }

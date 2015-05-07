@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.CountDownTimer;
@@ -653,6 +654,10 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
                 ivBoom.setBackgroundResource(R.drawable.ic_rank);
             }else
                 rowView = (View)convertView;
+
+            if (position % 2 == 0) {
+                rowView.setBackgroundColor(Color.argb(255, 205, 163, 104));
+            }
 
             return rowView;
         }
