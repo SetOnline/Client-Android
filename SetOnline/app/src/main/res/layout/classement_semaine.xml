@@ -57,7 +57,7 @@
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/lvClassement"
+            android:id="@+id/lvClassementSemaine"
             android:layout_column="0"
             android:choiceMode="none" />
     </TableRow>

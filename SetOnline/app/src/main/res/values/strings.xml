@@ -13,7 +13,7 @@
 
     <string name="tv_inscription">Création de compte</string>
     <string name="tv_pseudo">Pseudo</string>
-    <string name="tv_mail">Adresse mail valide</string>
+    <string name="tv_mail">Adresse mail</string>
     <string name="tv_password">Mot de passe</string>
     <string name="tv_avatar">Avatar</string>
     <string name="bt_uploadAvatar">Image...</string>

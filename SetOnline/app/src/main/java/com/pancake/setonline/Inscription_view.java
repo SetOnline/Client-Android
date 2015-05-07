@@ -18,9 +18,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.engineio.client.Socket;
-//import com.github.nkzawa.socketio.client.IO;
-//import com.github.nkzawa.socketio.client.Socket;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,8 +29,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-
 
 public class Inscription_view extends ActionBarActivity {
     private Button bt_loadAvatar;
@@ -64,7 +59,7 @@ public class Inscription_view extends ActionBarActivity {
                         boolean mdp = data.getJSONObject(2).getString("value").equals("true");
                         boolean avatar = true; //data.getJSONObject(3).getString("value").equals("true";
                         if(adresse_mail && pseudo && mdp && avatar){
-                            NotificationCompat.Builder mBuilder =
+                            /*NotificationCompat.Builder mBuilder =
                                     new NotificationCompat.Builder(getBaseContext())
                                             .setSmallIcon(R.drawable.ic_launcher2)
                                             .setContentTitle(getString(R.string.notif_title_inscription))
@@ -75,8 +70,9 @@ public class Inscription_view extends ActionBarActivity {
                             NotificationManager mNotifyMgr =
                                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                             // Builds the notification and issues it.
-                            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+                            mNotifyMgr.notify(mNotificationId, mBuilder.build());*/
 
+                            SocketManager.isNetGame = true;
                             Intent intent = new Intent(getApplicationContext(), menuJeu_view.class);
                             startActivity(intent);
                         } else {
@@ -154,7 +150,7 @@ public class Inscription_view extends ActionBarActivity {
         bt_validateInscription.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
                 // valid data ?
-                if(etPseudo.length() < 3){
+                if(etPseudo.length() < 3 || etPseudo.length() > 8){
                     Toast.makeText(getBaseContext(), R.string.error_nickname_too_short, Toast.LENGTH_LONG).show();
                     etPseudo.requestFocus();
                     return;
@@ -166,7 +162,7 @@ public class Inscription_view extends ActionBarActivity {
                     return;
                 }
 
-                if(etPassword.getText().length() < 4){
+                if(etPassword.getText().length() < 4 || etPassword.getText().length() > 20){
                     Toast.makeText(getBaseContext(), R.string.error_password_too_short, Toast.LENGTH_LONG).show();
                     etPassword.requestFocus();
                     return;
@@ -197,7 +193,6 @@ public class Inscription_view extends ActionBarActivity {
                 inscription_packet.put(json_psswd);
 
                 SocketManager.mSocketIO.emit("Creation compte", inscription_packet.toString());
-                System.out.println("Creation compte");
             }
         });
     }

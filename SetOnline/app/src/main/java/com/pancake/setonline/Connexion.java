@@ -65,7 +65,9 @@ public class Connexion extends ActionBarActivity {
                     if(res == 0){
                         Toast.makeText(Connexion.this, getString(R.string.error_info_connection), Toast.LENGTH_SHORT).show();
                         nickname = null;
+                        Profil_model.pseudo = null;
                     } else {
+                        Profil_model.pseudo = nickname;
                         SocketManager.isNetGame = true;
                         Intent intent = new Intent(getApplicationContext(), menuJeu_view.class);
                         startActivity(intent);
@@ -123,7 +125,7 @@ public class Connexion extends ActionBarActivity {
                     inscription_packet.put(json_pseudo);
                     inscription_packet.put(json_psswd);
 
-                    Toast.makeText(Connexion.this, "connexion...", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Connexion.this, "connexion...", Toast.LENGTH_SHORT).show();
                     SocketManager.mSocketIO.emit("Connexion", inscription_packet.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();

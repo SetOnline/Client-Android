@@ -120,7 +120,7 @@ public class JeuTypeVitesseOffline extends JeuType {
                             c3.getString("value").equals(setTrouve.substring(8, 12));
 
                     if(b1 && b2 && b3){
-                        fenetreJeu.onSetIncorrect(nSet.toString()); // set déjà donné
+                        fenetreJeu.onSetDejaDonne(nSet.toString()); // set déjà donné
                         return;
                     }
                 } catch (JSONException e) {

@@ -18,6 +18,8 @@ import java.util.ArrayList;
  */
 public class JeuTypeVitesseOnline extends JeuTypeOnline {
     protected CountDownTimer cdtUpdateClassement;
+    private boolean playing = false;
+    private ArrayList<JSONArray> setsTrouves;
     /**
      * évènement nouvelle partie
      * Données au format Json:
@@ -30,6 +32,7 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         public void call(final Object... args) {
             act.runOnUiThread(new Runnable() {
                 public void run() {
+                    playing = true;
                     fenetreJeu.onNewGame((String) args[0]);
                 }
             });
@@ -43,7 +46,15 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         public void call(final Object... args) {
             act.runOnUiThread(new Runnable() {
                 public void run() {
-                fenetreJeu.onGameTimerUpdate((int) args[0]);
+                    fenetreJeu.onGameTimerUpdate((int) args[0]);
+                    if(!playing){
+                        playing = true;
+                        // récupération de la partie en cours
+                        if((int) args[0] > 5){
+                            SocketManager.mSocketIO.emit("Demande partie en cours");
+                            System.out.println("emit Demande partie en cours");
+                        }
+                    }
                 }
             });
         }
@@ -61,7 +72,14 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         public void call(final Object... args) {
             act.runOnUiThread(new Runnable() {
                 public void run() {
-                fenetreJeu.onSetCorrect((String) args[0]);
+                    try {
+                        JSONArray jsa = new JSONArray((String) args[0]);
+                        setsTrouves.add(jsa);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    fenetreJeu.onSetCorrect((String) args[0]);
                 }
             });
         }
@@ -107,9 +125,27 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         }
     };
 
+    private Emitter.Listener onUnlockTrophy = new Emitter.Listener() {
+        public void call(final Object... args) {
+            act.runOnUiThread(new Runnable() {
+                public void run() {
+                    //fenetreJeu.onSetIncorrect((String) args[0]);
+                    try {
+                        JSONObject jso = new JSONObject((String)args[0]);
+                        fenetreJeu.unlockTrophy(jso.getString("pic"), jso.getString("name"), jso.getString("desc"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+
     public boolean init(IJeu_receiver fj, Activity a){
         boolean res = super.init(fj, a);
         if(!res) return false;
+
+        setsTrouves = new ArrayList<JSONArray>();
 
         // écoute des évènements
         SocketManager.mSocketIO.on("Nouvelle partie", onNewGame);
@@ -117,7 +153,7 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         SocketManager.mSocketIO.on("Set valide", onSetValide);
         SocketManager.mSocketIO.on("Set invalide", onSetInvalide);
         SocketManager.mSocketIO.on("Reponse classement partie actuelle", onClassementUpdate);
-
+        SocketManager.mSocketIO.on("Deblocage trophee", onUnlockTrophy);
 
         // timer
         cdtUpdateClassement = new CountDownTimer(1000, 1000) {
@@ -129,6 +165,7 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
             }
 
             public void onFinish() {
+                setsTrouves = new ArrayList<JSONArray>();
                 this.start();
             }
         };
@@ -142,16 +179,44 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         super.shutDown();
 
         // arrêt de l'écoute des évenements serveur
-        SocketManager.mSocketIO.off("Nouvelle partie", onNewGame);
-        SocketManager.mSocketIO.off("timer", onTimerUpdate);
-        SocketManager.mSocketIO.off("Set valide", onSetValide);
-        SocketManager.mSocketIO.off("Set invalide", onSetInvalide);
+        SocketManager.mSocketIO.off("Nouvelle partie");
+        SocketManager.mSocketIO.off("timer");
+        SocketManager.mSocketIO.off("Set valide");
+        SocketManager.mSocketIO.off("Set invalide");
         SocketManager.mSocketIO.off("Reponse classement partie actuelle");
+        SocketManager.mSocketIO.off("Deblocage trophee");
     }
 
     @Override
     public void sendSet(String setTrouve) {
         JSONArray nSet = new JSONArray();
+
+        for(int i = 0; i != setsTrouves.size(); ++i){
+            try {
+                JSONObject c1 = setsTrouves.get(i).getJSONObject(0);
+                JSONObject c2 = setsTrouves.get(i).getJSONObject(1);
+                JSONObject c3 = setsTrouves.get(i).getJSONObject(2);
+
+                boolean b1, b2, b3;
+                b1 = c1.getString("value").equals(setTrouve.substring(0, 4)) ||
+                        c1.getString("value").equals(setTrouve.substring(4, 8)) ||
+                        c1.getString("value").equals(setTrouve.substring(8, 12));
+                b2 = c2.getString("value").equals(setTrouve.substring(0, 4)) ||
+                        c2.getString("value").equals(setTrouve.substring(4, 8)) ||
+                        c2.getString("value").equals(setTrouve.substring(8, 12));
+                b3 = c3.getString("value").equals(setTrouve.substring(0, 4)) ||
+                        c3.getString("value").equals(setTrouve.substring(4, 8)) ||
+                        c3.getString("value").equals(setTrouve.substring(8, 12));
+
+                if(b1 && b2 && b3){
+                    fenetreJeu.onSetDejaDonne(nSet.toString()); // set déjà donné
+                    return;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
 
         try {
             // création de 3 objets Json (stockés dans un tableau Json) contenant chacun la valeur d'une carte

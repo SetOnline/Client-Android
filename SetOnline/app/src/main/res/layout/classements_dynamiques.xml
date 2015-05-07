@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_panel2">
 
     <TabHost
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/tabHost_cl_gen">
+        android:id="@+id/tabHost_cl">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -26,22 +26,16 @@
 
 
                 <include
-                    android:id="@+id/tab_cinf"
+                    android:id="@+id/tab_cpec"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    layout="@layout/classement_infini"></include>
+                    layout="@layout/classement_partie_en_cours"></include>
 
                 <include
-                    android:id="@+id/tab_csem"
+                    android:id="@+id/tab_cdp"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    layout="@layout/classement_semaine"></include>
-
-                <include
-                    android:id="@+id/tab_ctod"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    layout="@layout/classement_jour"></include>
+                    layout="@layout/classement_derniere_partie"></include>
             </FrameLayout>
         </LinearLayout>
     </TabHost>

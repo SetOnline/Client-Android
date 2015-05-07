@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -74,11 +75,18 @@ public class menuJeu_view extends ActionBarActivity {
             startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
         }*/
 
+        Typeface font = Typeface.createFromAsset(getAssets(), Profil_model.defaultFontName);
+
         // définition des trois boutons
         Button btnJouer = (Button)findViewById(R.id.buttonJouer);
         Button btnProfil = (Button)findViewById(R.id.buttonMonProfil);
         Button btnClassement = (Button)findViewById(R.id.buttonClassement);
         Button btnDeconnexion = (Button)findViewById(R.id.buttonDisconnect);
+
+        btnJouer.setTypeface(font);
+        btnProfil.setTypeface(font);
+        btnClassement.setTypeface(font);
+        btnDeconnexion.setTypeface(font);
 
         //définition de l'action des trois boutons
         btnJouer.setOnClickListener(new View.OnClickListener() {

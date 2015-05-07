@@ -7,19 +7,9 @@
     android:background="@drawable/background"
     tools:context="com.pancake.setonline">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/tv_inscription"
-        android:id="@+id/tvInscription" />
-
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignStart="@+id/tvInscription"
-        android:layout_alignLeft="@+id/tvInscription"
-        android:layout_below="@+id/tvInscription"
         android:id="@+id/scrollView" >
 
         <LinearLayout

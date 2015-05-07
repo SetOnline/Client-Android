@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -31,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
+import java.util.ArrayList;
 
 
 public class Profil extends ActionBarActivity {
@@ -50,6 +52,11 @@ public class Profil extends ActionBarActivity {
 
     private ImageView ivAddNewFriend;
     private EditText etNewFriendName;
+
+    private TextView playerNickname;
+
+    protected CountDownTimer cdtRefreshFriendList;
+    private int refresh_freq = 10000;
 
     private Emitter.Listener onGetListeAmis = new Emitter.Listener() {
         public void call(final Object... args) {
@@ -152,25 +159,25 @@ public class Profil extends ActionBarActivity {
         myTabHost =(TabHost) findViewById(R.id.tabHost);
         myTabHost.setup();
 
-        TabHost.TabSpec battery_tab_spec = myTabHost.newTabSpec("trophies");
+        TabHost.TabSpec trophy_tab_spec = myTabHost.newTabSpec("trophies");
 
-        battery_tab_spec.setContent(R.id.tab1);
-        battery_tab_spec.setIndicator("Trophées");
-        myTabHost.addTab(battery_tab_spec);
+        trophy_tab_spec.setContent(R.id.tab1);
+        trophy_tab_spec.setIndicator("Trophées");
+        myTabHost.addTab(trophy_tab_spec);
 
         // Set Tab Specification for Network Tab
-        TabHost.TabSpec network_tab_spec = myTabHost.newTabSpec("medals");
+        TabHost.TabSpec medal_tab_spec = myTabHost.newTabSpec("medals");
 
-        network_tab_spec.setContent(R.id.tab2);
-        network_tab_spec.setIndicator("Médailles");
-        myTabHost.addTab(network_tab_spec);
+        medal_tab_spec.setContent(R.id.tab2);
+        medal_tab_spec.setIndicator("Médailles");
+        myTabHost.addTab(medal_tab_spec);
 
         // Set Tab Specification for Device Tab
-        TabHost.TabSpec device_tab_spec = myTabHost.newTabSpec("friends");
+        TabHost.TabSpec friend_tab_spec = myTabHost.newTabSpec("friends");
 
-        device_tab_spec.setContent(R.id.tab3);
-        device_tab_spec.setIndicator("Amis");
-        myTabHost.addTab(device_tab_spec);
+        friend_tab_spec.setContent(R.id.tab3);
+        friend_tab_spec.setIndicator("Amis");
+        myTabHost.addTab(friend_tab_spec);
 
         myTabHost.setOnTabChangedListener(new AnimatedTabHostListener(getBaseContext(), myTabHost));
 
@@ -182,6 +189,8 @@ public class Profil extends ActionBarActivity {
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             ivPlayerAvatar.setImageBitmap(myBitmap);
         }
+        playerNickname = (TextView)findViewById(R.id.tvPseudo);
+        playerNickname.setText(Profil_model.pseudo);
 
         ivAddNewFriend = (ImageView)findViewById(R.id.ivAddNewFriend);
         etNewFriendName = (EditText)findViewById(R.id.etAddFriendName);
@@ -194,7 +203,8 @@ public class Profil extends ActionBarActivity {
 
         ivAddNewFriend.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                SocketManager.mSocketIO.emit("Demander ami", etNewFriendName.getText().toString());
+                if(etNewFriendName.getText().length() < 3)
+                    SocketManager.mSocketIO.emit("Demander ami", etNewFriendName.getText().toString());
             }
         });
 
@@ -206,6 +216,21 @@ public class Profil extends ActionBarActivity {
         SocketManager.mSocketIO.emit("Demande liste amis");
         SocketManager.mSocketIO.emit("Demande liste trophees");
         SocketManager.mSocketIO.emit("Demande liste medailles");
+
+
+        // timer
+        cdtRefreshFriendList = new CountDownTimer(refresh_freq, refresh_freq) {
+
+            public void onTick(long millisUntilFinished) {
+                //
+            }
+
+            public void onFinish() {
+                SocketManager.mSocketIO.emit("Demande liste amis");
+                this.start();
+            }
+        };
+        cdtRefreshFriendList.start();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

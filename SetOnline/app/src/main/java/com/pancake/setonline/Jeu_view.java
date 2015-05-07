@@ -1,12 +1,16 @@
 package com.pancake.setonline;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,7 +25,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TabHost;
+import android.widget.TabWidget;
 import android.widget.Toast;
 import android.widget.TextView;
 import android.widget.ImageButton;
@@ -61,6 +69,15 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
     private ListView lv_classement;
     private GameClassementListAdapter lv_adapter_classement;
 
+    private ListView lv_classement_cdp;
+    private GameClassementListAdapter lv_adapter_classement_cdp;
+
+    private TabHost myTabHost;
+
+    private String[] ancien_classement = null;
+
+    private Typeface font;
+
     /**
      * Fonction appellée automatiquement pour chaque activité
      * @param savedInstanceState
@@ -72,6 +89,8 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
+
+        font = Typeface.createFromAsset(getAssets(), Profil_model.defaultFontName);
 
         // permet de mettre en mode immersif (KIT KAT + uniquement !!!)
         /*if(android.os.Build.VERSION.SDK_INT >= 19) {
@@ -97,8 +116,33 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         menuS.setShadowDrawable(R.drawable.shadow_left);
         menuS.setSecondaryShadowDrawable(R.drawable.shadow_right);
         menuS.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-        menuS.setMenu(R.layout.classement_partie_en_cours);
+        menuS.setMenu(R.layout.classements_dynamiques);
         menuS.setSecondaryMenu(R.layout.sets_trouves_partie_en_cours);
+
+        myTabHost =(TabHost) findViewById(R.id.tabHost_cl);
+        myTabHost.setup();
+
+        TabHost.TabSpec cpec_tab_spec = myTabHost.newTabSpec("classement_partie_en_cours");
+
+        cpec_tab_spec.setContent(R.id.tab_cpec);
+        cpec_tab_spec.setIndicator("Classement partie en cours");
+        myTabHost.addTab(cpec_tab_spec);
+
+        TabHost.TabSpec cdp_tab_spec = myTabHost.newTabSpec("classement_derniere_cours");
+        cdp_tab_spec.setContent(R.id.tab_cdp);
+        cdp_tab_spec.setIndicator("Classement dernière partie");
+        myTabHost.addTab(cdp_tab_spec);
+
+        LinearLayout linearLayout = (LinearLayout) myTabHost.getChildAt(0);
+        TabWidget tw = (TabWidget) linearLayout .getChildAt(0);
+        // tab 1
+        LinearLayout firstTabLayout = (LinearLayout) tw.getChildAt(0);
+        TextView tabHeader = (TextView) firstTabLayout.getChildAt(1);
+        tabHeader.setTypeface(font);
+        // tab 2
+        LinearLayout secondTabLayout = (LinearLayout) tw.getChildAt(1);
+        TextView tabHeader2 = (TextView) secondTabLayout.getChildAt(1);
+        tabHeader2.setTypeface(font);
 
         //Enable home button
         //getSupportActionBar().setHomeButtonEnabled(true);
@@ -107,6 +151,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         lv_classement = (ListView)findViewById(R.id.lvClassement);
+        lv_classement_cdp = (ListView)findViewById(R.id.lvClassementDP);
         gbSet = (ImageView)findViewById(R.id.good_bad_set);
 
         // récupération de la liste des sets trouvés situés dans le panneau de droite
@@ -115,8 +160,21 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         // initialisation des composants
         validSetsFound = new ArrayList<String>();
 
+        TextView tvSetsFound = (TextView)findViewById(R.id.tvSetsFound);
+        TextView tvPseudo = (TextView)findViewById(R.id.PseudoID);
+        TextView tvRang = (TextView)findViewById(R.id.RangID);
+        TextView tvPseudoDP = (TextView)findViewById(R.id.PseudoIDdp);
+        TextView tvRangDP = (TextView)findViewById(R.id.RangIDdp);
         tvTimer = (TextView)findViewById(R.id.timer);
         tvNbSetsATrouver = (TextView)findViewById(R.id.tvSetsATrouver);
+
+        tvTimer.setTypeface(font);
+        tvNbSetsATrouver.setTypeface(font);
+        tvSetsFound.setTypeface(font);
+        tvPseudo.setTypeface(font);
+        tvRang.setTypeface(font);
+        tvPseudoDP.setTypeface(font);
+        tvRangDP.setTypeface(font);
 
         iv = new ImageView[12];
         iv[0] = (ImageView)findViewById(R.id.imageView);
@@ -302,11 +360,11 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         String finalSeconds = (seconds < 10) ? "0" + seconds: seconds + "";
         String finalMinutes = (minutes < 10) ? "0" + minutes: minutes + "";
 
-        if(isPlaying){
+        //if(isPlaying){
             tvTimer.setText(finalMinutes + ":" + finalSeconds);
-        } else {
+        /*} else {
             tvTimer.setText("Une partie est déjà en cours... (" +finalMinutes + ":" + finalSeconds + ")");
-        }
+        }*/
     }
 
     /**
@@ -321,6 +379,13 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         validSetsFound.clear(); // remise à zéro des sets trouvés pour la partie en cours
         lvSetsFound.setAdapter(null);
         undoSelection(); // remise à zéro de la sélection des cartes
+
+        if(ancien_classement != null && ancien_classement.length != 0) {
+            lv_adapter_classement_cdp = new GameClassementListAdapter(getBaseContext(), ancien_classement);
+            lv_classement_cdp.setAdapter(lv_adapter_classement_cdp);
+        } else {
+            lv_classement_cdp.setAdapter(null);
+        }
 
         try {
             JSONArray data = new JSONArray(cartes); // remise en format Json du Json stringifié
@@ -374,6 +439,36 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
 
         lv_adapter_classement = new GameClassementListAdapter(getBaseContext(), cls);
         lv_classement.setAdapter(lv_adapter_classement);
+
+        ancien_classement = cls;
+    }
+
+    @Override
+    public void unlockTrophy(String picName, String name, String desc) {
+        /*AlertDialog.Builder dlgAddFriend = new AlertDialog.Builder(Jeu_view.this);
+        dlgAddFriend.setMessage(desc);
+        dlgAddFriend.setTitle(name);
+        dlgAddFriend.setPositiveButton("OK", null);
+        dlgAddFriend.setCancelable(false);
+        dlgAddFriend.create().show();*/
+
+        LayoutInflater inflater = getLayoutInflater();
+        View dialoglayout = inflater.inflate(R.layout.dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog dialog = builder.create();
+        dialog.setView(dialoglayout);
+        dialog.setCancelable(true);
+
+        TextView tvTitle = (TextView)dialoglayout.findViewById(R.id.tvAlertTitle);
+        tvTitle.setText(name);
+
+        TextView tvDesc = (TextView)dialoglayout.findViewById(R.id.tvAlertDesc);
+        tvDesc.setText(desc);
+
+        ImageView ivTr = (ImageView)dialoglayout.findViewById(R.id.ivUnlockedTrophyPic);
+        ivTr.setBackgroundResource(this.getResources().getIdentifier(picName, "drawable", this.getPackageName()));
+
+        dialog.show();
     }
 
     /**
@@ -421,7 +516,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         lv_foundSets = new GameSetsListAdapter(getBaseContext(), lst);
         lvSetsFound.setAdapter(lv_foundSets);
 
-        Toast.makeText(Jeu_view.this, "Set valide \\o/", Toast.LENGTH_LONG).show();
+        //Toast.makeText(Jeu_view.this, "Set valide \\o/", Toast.LENGTH_LONG).show();
 
         gbSet.setVisibility(View.VISIBLE);
         gbSet.setBackgroundResource(R.drawable.good_set);
@@ -442,11 +537,26 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
      * évènement récupération d'un set invalide
      */
     public void onSetIncorrect(String setIncorrect) {
-        Toast.makeText(Jeu_view.this, "Set invalide :(", Toast.LENGTH_LONG).show();
-        gbSet.setBackgroundResource(R.drawable.bad_set);
-
+        //Toast.makeText(Jeu_view.this, "Set invalide :(", Toast.LENGTH_LONG).show();
         gbSet.setVisibility(View.VISIBLE);
         gbSet.setBackgroundResource(R.drawable.bad_set);
+        gbSetTimer = new CountDownTimer(500, 10) {
+
+            public void onTick(long millisUntilFinished) {
+                gbSet.setAlpha(((float)millisUntilFinished) / 500.0f);
+            }
+
+
+            public void onFinish() {
+                gbSet.setVisibility(View.INVISIBLE);
+            }
+        };
+        gbSetTimer.start();
+    }
+
+    public void onSetDejaDonne(String setIncorrect) {
+        gbSet.setVisibility(View.VISIBLE);
+        gbSet.setBackgroundResource(R.drawable.already_given_set);
         gbSetTimer = new CountDownTimer(500, 10) {
 
             public void onTick(long millisUntilFinished) {
@@ -535,6 +645,9 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
             if(convertView == null ) {
                 tvPseudo.setText(pseudo);
                 tvScore.setText(score);
+
+                tvPseudo.setTypeface(font);
+                tvScore.setTypeface(font);
             }else
                 rowView = (View)convertView;
 

@@ -11,7 +11,7 @@
     <TableRow android:id="@+id/tablerowhouse" >
 
         <TextView
-            android:id="@+id/PseudoID"
+            android:id="@+id/PseudoIDdp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -23,7 +23,7 @@
         </TextView>
 
         <TextView
-            android:id="@+id/RangID"
+            android:id="@+id/RangIDdp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -57,7 +57,7 @@
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/lvClassement"
+            android:id="@+id/lvClassementDP"
             android:layout_column="0"
             android:choiceMode="none" />
     </TableRow>
