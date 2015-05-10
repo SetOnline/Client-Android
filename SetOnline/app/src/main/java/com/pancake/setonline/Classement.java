@@ -3,6 +3,7 @@ package com.pancake.setonline;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,8 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,44 +41,46 @@ public class Classement extends ActionBarActivity {
     private ListView lv_classement_jour;
     private GameClassementListAdapter lv_adapter_classement_jour;
 
-        private Emitter.Listener onClassementResult = new Emitter.Listener() {
-            public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        // get JSON
-                        lv_classement.setAdapter(null);
+    private Typeface font;
 
-                        System.out.println("RECEIVED : " + (String)args[0]);
+    private Emitter.Listener onClassementResult = new Emitter.Listener() {
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    // get JSON
+                    lv_classement.setAdapter(null);
 
-                        JSONArray data = null; // remise en format Json du Json stringifié
+                    System.out.println("RECEIVED : " + (String)args[0]);
+
+                    JSONArray data = null; // remise en format Json du Json stringifié
+                    try {
+                        data = new JSONArray((String)args[0]);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    String newList[] = new String[data.length()];
+
+                    for(int i = 0; i != data.length(); ++i){
                         try {
-                            data = new JSONArray((String)args[0]);
+                            newList[i] = data.getJSONObject(i).getString("name") + '\n' + data.getJSONObject(i).getString("value");
                         } catch (JSONException e) {
                             e.printStackTrace();
                             return;
                         }
-
-                        String newList[] = new String[data.length()];
-
-                        for(int i = 0; i != data.length(); ++i){
-                            try {
-                                newList[i] = data.getJSONObject(i).getString("name") + '\n' + data.getJSONObject(i).getString("value");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                return;
-                            }
-                        }
-
-                        for(String s : newList){
-                            System.out.println("add : " + s);
-                        }
-
-                        lv_adapter_classement = new GameClassementListAdapter(getBaseContext(), newList);
-                        lv_classement.setAdapter(lv_adapter_classement);
                     }
-                });
-            }
-        };
+
+                    for(String s : newList){
+                        System.out.println("add : " + s);
+                    }
+
+                    lv_adapter_classement = new GameClassementListAdapter(getBaseContext(), newList);
+                    lv_classement.setAdapter(lv_adapter_classement);
+                }
+            });
+        }
+    };
 
     private Emitter.Listener onClassementSemResult = new Emitter.Listener() {
         public void call(final Object... args) {
@@ -159,6 +164,8 @@ public class Classement extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_classement);
 
+        font = Typeface.createFromAsset(getAssets(), Profil_model.defaultFontName);
+
         myTabHost =(TabHost) findViewById(R.id.tabHost_cl_gen);
         myTabHost.setup();
 
@@ -178,9 +185,43 @@ public class Classement extends ActionBarActivity {
         ctod_tab_spec.setIndicator("Classement jour");
         myTabHost.addTab(ctod_tab_spec);
 
+
+        LinearLayout linearLayout = (LinearLayout) myTabHost.getChildAt(0);
+        TabWidget tw = (TabWidget) linearLayout .getChildAt(0);
+        // tab 1
+        LinearLayout firstTabLayout = (LinearLayout) tw.getChildAt(0);
+        TextView tabHeader = (TextView) firstTabLayout.getChildAt(1);
+        tabHeader.setTypeface(font);
+        // tab 2
+        LinearLayout secondTabLayout = (LinearLayout) tw.getChildAt(1);
+        TextView tabHeader2 = (TextView) secondTabLayout.getChildAt(1);
+        tabHeader2.setTypeface(font);
+        // tab 3
+        LinearLayout thirdTabLayout = (LinearLayout) tw.getChildAt(2);
+        TextView tabHeader3 = (TextView) thirdTabLayout.getChildAt(1);
+        tabHeader3.setTypeface(font);
+
         lv_classement = (ListView)findViewById(R.id.lvClassement);
         lv_classement_sem = (ListView)findViewById(R.id.lvClassementSemaine);
         lv_classement_jour = (ListView)findViewById(R.id.lvClassementJour);
+
+        //
+        TextView tvPseudoTitleCJ = (TextView)findViewById(R.id.PseudoID_cj);
+        TextView tvPseudoTitleCS = (TextView)findViewById(R.id.PseudoID_cs);
+        TextView tvPseudoTitleCI = (TextView)findViewById(R.id.PseudoID_ci);
+
+        TextView tvScoreTitleCJ = (TextView)findViewById(R.id.ScoreID_cj);
+        TextView tvScoreTitleCS = (TextView)findViewById(R.id.ScoreID_cs);
+        TextView tvScoreTitleCI = (TextView)findViewById(R.id.ScoreID_ci);
+
+        tvPseudoTitleCJ.setTypeface(font);
+        tvPseudoTitleCS.setTypeface(font);
+        tvPseudoTitleCI.setTypeface(font);
+
+        tvScoreTitleCJ.setTypeface(font);
+        tvScoreTitleCS.setTypeface(font);
+        tvScoreTitleCI.setTypeface(font);
+
 
         // nodeJS, gestion de la communication client/serveur
         SocketManager.initServerConnexion();
@@ -227,6 +268,7 @@ public class Classement extends ActionBarActivity {
             // récupération de la ligne (pseudo + score)
             TextView tvPseudo = (TextView) rowView.findViewById(R.id.tv_crl_pseudo);
             TextView tvScore = (TextView) rowView.findViewById(R.id.tv_crl_score);
+            TextView tvRank = (TextView) rowView.findViewById(R.id.tv_crl_rank);
 
             // récupération des numéros des cartes du ième set trouvé
             String data[] = getItem(position).split("\n");
@@ -234,8 +276,13 @@ public class Classement extends ActionBarActivity {
             String score = data[1];
 
             if(convertView == null ) {
+                tvRank.setText(position);
                 tvPseudo.setText(pseudo);
                 tvScore.setText(score);
+
+                tvPseudo.setTypeface(font);
+                tvRank.setTypeface(font);
+                tvScore.setTypeface(font);
             }else
                 rowView = (View)convertView;
 

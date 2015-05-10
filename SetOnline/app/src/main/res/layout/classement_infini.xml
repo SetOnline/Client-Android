@@ -11,7 +11,7 @@
     <TableRow android:id="@+id/tablerowhouse" >
 
         <TextView
-            android:id="@+id/PseudoID"
+            android:id="@+id/PseudoID_ci"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -23,7 +23,7 @@
         </TextView>
 
         <TextView
-            android:id="@+id/RangID"
+            android:id="@+id/ScoreID_ci"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

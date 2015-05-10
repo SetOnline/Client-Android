@@ -113,7 +113,7 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
                             JSONObject jso = data.getJSONObject(i);
 
                             //c.put(jso.getString("name"), jso.getInt("value"));
-                            c[i] = jso.getString("rank") + " : " + jso.getString("name") + "\n" + jso.getInt("value");
+                            c[i] = jso.getString("rank") + "\n" + jso.getString("name") + "\n" + jso.getInt("value");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

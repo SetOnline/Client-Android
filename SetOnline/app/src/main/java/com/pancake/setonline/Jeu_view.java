@@ -637,21 +637,24 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
             // récupération de la ligne (pseudo + score)
             TextView tvPseudo = (TextView) rowView.findViewById(R.id.tv_crl_pseudo);
             TextView tvScore = (TextView) rowView.findViewById(R.id.tv_crl_score);
-            ImageView ivBoom = (ImageView)rowView.findViewById(R.id.ivBoom);
+            TextView tvRank = (TextView)rowView.findViewById(R.id.tv_crl_rank);
+            //ImageView ivBoom = (ImageView)rowView.findViewById(R.id.ivBoom);
 
             // récupération des numéros des cartes du ième set trouvé
             String data[] = getItem(position).split("\n");
-            String pseudo = data[0];
-            String score = data[1];
+            String rank = data[0];
+            String pseudo = data[1];
+            String score = data[2];
 
             if(convertView == null ) {
                 tvPseudo.setText(pseudo);
                 tvScore.setText(score);
+                tvRank.setText(rank);
 
                 tvPseudo.setTypeface(font);
                 tvScore.setTypeface(font);
 
-                ivBoom.setBackgroundResource(R.drawable.ic_rank);
+                //ivBoom.setBackgroundResource(R.drawable.ic_rank);
             }else
                 rowView = (View)convertView;
 
