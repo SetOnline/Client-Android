@@ -9,9 +9,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-/**
- * Created by Matthieu on 25/03/2015.
- */
 public class JeuTypeVitesseOffline extends JeuType {
     protected int duree_partie = 60000; // 60 secondes
     protected CountDownTimer cdtTIME;
@@ -23,6 +20,12 @@ public class JeuTypeVitesseOffline extends JeuType {
 
     }
 
+    /**
+     * Initialisation d'un jeu en mode HORS LIGNE
+     * @param fj classe réceptrice des évènements du jeu
+     * @param a une activity, utilisée pour "multithreader" les calculs (pas utile pour le mode hors ligne)
+     * @return VRAI si l'initialisation s'est passée correctement, FAUX sinon.
+     */
     public boolean init(IJeu_receiver fj, Activity a){
         // pas besoin d'initialiser de connexion nodeJS
         fenetreJeu = fj;
@@ -35,7 +38,9 @@ public class JeuTypeVitesseOffline extends JeuType {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        // envoi de l'évènement de nouvelle partie
         fenetreJeu.onNewGame(partieEnCours);
+
         setsTrouves = new ArrayList<JSONArray>();
 
         // timer
@@ -71,6 +76,10 @@ public class JeuTypeVitesseOffline extends JeuType {
         cdtTIME.cancel();
     }
 
+    /**
+     * Envoi du set (vérification uniquement en local)
+     * @param setTrouve le set proposé par le joueur
+     */
     public void sendSet(String setTrouve) {
         JSONArray nSet = new JSONArray();
 

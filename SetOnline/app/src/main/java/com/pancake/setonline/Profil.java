@@ -58,8 +58,9 @@ public class Profil extends ActionBarActivity {
     private TextView playerNickname;
 
     protected CountDownTimer cdtRefreshFriendList;
-    private int refresh_freq = 10000;
+    private int refresh_freq = 10000; // 10 secondes
 
+    // Gestion de l'évènement de réception d'une demande d'ami. Appelé à partir d'un thread
     private Emitter.Listener onGetNewFriendDemands = new Emitter.Listener() {
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -98,6 +99,7 @@ public class Profil extends ActionBarActivity {
         }
     };
 
+    // Gestion de l'évènement de réception de la liste d'amis. Appelé à partir d'un thread
     private Emitter.Listener onGetListeAmis = new Emitter.Listener() {
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -122,6 +124,7 @@ public class Profil extends ActionBarActivity {
         }
     };
 
+    // Gestion de l'évènement de réception de la liste des trophées. Appelé à partir d'un thread
     private Emitter.Listener onGetListeTrophees = new Emitter.Listener() {
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -144,6 +147,7 @@ public class Profil extends ActionBarActivity {
         }
     };
 
+    // Gestion de l'évènement de réception de la liste des médailles. Appelé à partir d'un thread
     private Emitter.Listener onGetListeMedailles = new Emitter.Listener() {
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -166,6 +170,7 @@ public class Profil extends ActionBarActivity {
         }
     };
 
+    // Gestion de l'évènement de réception du résultat d'une demande d'ami. Appelé à partir d'un thread
     private Emitter.Listener onReponseDemandeAmi = new Emitter.Listener() {
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -192,10 +197,15 @@ public class Profil extends ActionBarActivity {
         }
     };
 
+    /**
+     * Initialisation de la vue
+     * @param savedInstanceState
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
 
+        // onglets
         myTabHost =(TabHost) findViewById(R.id.tabHost);
         myTabHost.setup();
 
@@ -205,14 +215,13 @@ public class Profil extends ActionBarActivity {
         trophy_tab_spec.setIndicator("Trophées");
         myTabHost.addTab(trophy_tab_spec);
 
-        // Set Tab Specification for Network Tab
+
         TabHost.TabSpec medal_tab_spec = myTabHost.newTabSpec("medals");
 
         medal_tab_spec.setContent(R.id.tab2);
         medal_tab_spec.setIndicator("Médailles");
         myTabHost.addTab(medal_tab_spec);
 
-        // Set Tab Specification for Device Tab
         TabHost.TabSpec friend_tab_spec = myTabHost.newTabSpec("friends");
 
         friend_tab_spec.setContent(R.id.tab3);
@@ -296,7 +305,7 @@ public class Profil extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // SWIPE TABS
+    // SWIPE
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
 
@@ -330,7 +339,7 @@ public class Profil extends ActionBarActivity {
     }
 
     /////////////////////////////////
-    // TAB ANIMATION MANAGEMENT
+    // ANIMATION D'ONGLETS
     /////////////////////////////////
     public class AnimatedTabHostListener implements TabHost.OnTabChangeListener {
 
@@ -432,6 +441,9 @@ public class Profil extends ActionBarActivity {
         }
     }
 
+    /**
+     * gestion de la liste d'amis au niveau d'une ligne
+     */
     private class FriendListAdapter extends ArrayAdapter<String> {
 
         public View getView(int position, View convertView, ViewGroup parent) {

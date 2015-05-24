@@ -43,6 +43,7 @@ public class Classement extends ActionBarActivity {
 
     private Typeface font;
 
+    // Gestion de l'évènement de réception des données de classement. Appelé à partir d'un thread
     private Emitter.Listener onClassementResult = new Emitter.Listener() {
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -82,6 +83,7 @@ public class Classement extends ActionBarActivity {
         }
     };
 
+    // Gestion de l'évènement de réception des données de classement de la semaine. Appelé à partir d'un thread
     private Emitter.Listener onClassementSemResult = new Emitter.Listener() {
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -121,6 +123,7 @@ public class Classement extends ActionBarActivity {
         }
     };
 
+    // Gestion de l'évènement de réception des données de classement du jour. Appelé à partir d'un thread
     private Emitter.Listener onClassementJourResult = new Emitter.Listener() {
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -160,12 +163,18 @@ public class Classement extends ActionBarActivity {
         }
     };
 
+    /**
+     * Création de la vue
+     * @param savedInstanceState
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_classement);
 
+        // initialisation de la police d'écriture
         font = Typeface.createFromAsset(getAssets(), Profil_model.defaultFontName);
 
+        // initialisation des onglets
         myTabHost =(TabHost) findViewById(R.id.tabHost_cl_gen);
         myTabHost.setup();
 
@@ -201,11 +210,12 @@ public class Classement extends ActionBarActivity {
         TextView tabHeader3 = (TextView) thirdTabLayout.getChildAt(1);
         tabHeader3.setTypeface(font);
 
+        // Initialisation des listes (classements)
         lv_classement = (ListView)findViewById(R.id.lvClassement);
         lv_classement_sem = (ListView)findViewById(R.id.lvClassementSemaine);
         lv_classement_jour = (ListView)findViewById(R.id.lvClassementJour);
 
-        //
+        // Initialisation des boîtes de texte
         TextView tvPseudoTitleCJ = (TextView)findViewById(R.id.PseudoID_cj);
         TextView tvPseudoTitleCS = (TextView)findViewById(R.id.PseudoID_cs);
         TextView tvPseudoTitleCI = (TextView)findViewById(R.id.PseudoID_ci);
@@ -214,6 +224,7 @@ public class Classement extends ActionBarActivity {
         TextView tvScoreTitleCS = (TextView)findViewById(R.id.ScoreID_cs);
         TextView tvScoreTitleCI = (TextView)findViewById(R.id.ScoreID_ci);
 
+        // Application de la police d'écriture
         tvPseudoTitleCJ.setTypeface(font);
         tvPseudoTitleCS.setTypeface(font);
         tvPseudoTitleCI.setTypeface(font);
@@ -265,12 +276,12 @@ public class Classement extends ActionBarActivity {
 
             View rowView = inflater.inflate(R.layout.classement_row_layout, parent, false);
 
-            // récupération de la ligne (pseudo + score)
+            // récupération de la ligne (pseudo + score + rang)
             TextView tvPseudo = (TextView) rowView.findViewById(R.id.tv_crl_pseudo);
             TextView tvScore = (TextView) rowView.findViewById(R.id.tv_crl_score);
             TextView tvRank = (TextView) rowView.findViewById(R.id.tv_crl_rank);
 
-            // récupération des numéros des cartes du ième set trouvé
+            // récupération des informations
             String data[] = getItem(position).split("\n");
             String pseudo = data[0];
             String score = data[1];

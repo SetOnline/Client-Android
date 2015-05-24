@@ -47,7 +47,10 @@ public class ModificationProfil_view extends ActionBarActivity {
     private static final int ACTION_SELECT_PICTURE = 1;
     private static final int ACTION_TAKE_PHOTO = 2;
 
-    @Override
+    /**
+     * Initialisation de la vue
+     * @param savedInstanceState
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modification_profil_view);
@@ -61,6 +64,7 @@ public class ModificationProfil_view extends ActionBarActivity {
         bt_validate = (Button)findViewById(R.id.btValidateProfilModif);
         bt_validate.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
+                // Vérification des données
                 if(etNewPassword.getText().length() < 10){
                     Toast.makeText(getBaseContext(), R.string.error_password_too_short, Toast.LENGTH_LONG).show();
                     etNewPassword.requestFocus();
@@ -117,15 +121,21 @@ public class ModificationProfil_view extends ActionBarActivity {
         });
     }
 
+    /**
+     * Récupération de l'image ou de la photo (pour l'avatar)
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == ACTION_SELECT_PICTURE) {
+            if (requestCode == ACTION_SELECT_PICTURE) { // Avatar depuis IMAGE
                 Uri selectedImageUri = data.getData();
                 BitmapFactory.Options bfOptions = new BitmapFactory.Options();
 
-                bfOptions.inDither=false;          //Disable Dithering mode
-                bfOptions.inPurgeable=true;        //Tell to gc that whether it needs free memory, the Bitmap can be cleared
-                bfOptions.inInputShareable=true;   //Which kind of reference will be used to recover the Bitmap data after being clear, when it will be used in the future
+                bfOptions.inDither=false;          // Désactiver le Dithering
+                bfOptions.inPurgeable=true;        // Supprimable si il y a besoin de RAM
+                bfOptions.inInputShareable=true;
                 bfOptions.inSampleSize=5;
                 bfOptions.inTempStorage=new byte[32 * 1024];
                 InputStream stream = null;
@@ -147,12 +157,12 @@ public class ModificationProfil_view extends ActionBarActivity {
 
                 try {
                     f.createNewFile();
-                    //Convert bitmap to byte array
+                    // conversion bitmap -> tableau de BYTE
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     saved.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                     byte[] bitmapdata = bos.toByteArray();
 
-                    //write the bytes in file
+                    // sauvegarde dans un fichier
                     FileOutputStream fos = new FileOutputStream(f);
                     fos.write(bitmapdata);
                     fos.flush();
@@ -161,15 +171,15 @@ public class ModificationProfil_view extends ActionBarActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else if(requestCode == ACTION_TAKE_PHOTO){
+            } else if(requestCode == ACTION_TAKE_PHOTO){ // avatar depuis PHOTO
                 Profil_model.createAppFolderIfNeeded();
                 File f = new File(Profil_model.getAvatarFilename());
 
                 BitmapFactory.Options bfOptions = new BitmapFactory.Options();
 
-                bfOptions.inDither=false;          //Disable Dithering mode
-                bfOptions.inPurgeable=true;        //Tell to gc that whether it needs free memory, the Bitmap can be cleared
-                bfOptions.inInputShareable=true;   //Which kind of reference will be used to recover the Bitmap data after being clear, when it will be used in the future
+                bfOptions.inDither=false;          // Désactiver le Dithering
+                bfOptions.inPurgeable=true;        // Supprimable si il y a besoin de RAM
+                bfOptions.inInputShareable=true;
                 bfOptions.inSampleSize=5;
                 bfOptions.inTempStorage=new byte[32 * 1024];
 
@@ -186,12 +196,12 @@ public class ModificationProfil_view extends ActionBarActivity {
 
                 try {
                     f.createNewFile();
-                    //Convert bitmap to byte array
+                    // conversion bitmap -> tableau de BYTE
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     saved.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                     byte[] bitmapdata = bos.toByteArray();
 
-                    //write the bytes in file
+                    // sauvegarde dans un fichier
                     FileOutputStream fos = new FileOutputStream(f);
                     fos.write(bitmapdata);
                     fos.flush();

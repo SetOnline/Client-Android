@@ -15,15 +15,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-/**
- * Created by Matthieu on 11/04/2015.
- */
 public class SocketManager {
     public static Socket mSocketEngine = null;
     public static com.github.nkzawa.socketio.client.Socket mSocketIO = null;
-    protected static final String serverAddress = "http://37.59.123.190:1337";
+    protected static final String serverAddress = "SERVER_ADDRESS";
     public static boolean isNetGame = true;
 
+    /**
+     * Initialisation de la connexion au serveur
+     */
     public static void initServerConnexion(){
         if(mSocketEngine == null && mSocketIO == null){
             System.out.println("INITIALIZATION...");
@@ -41,6 +41,9 @@ public class SocketManager {
         }
     }
 
+    /**
+     * Connexion au serveur
+     */
     public static void connectToServer(){
         if(!mSocketIO.connected()){
             System.out.println("CONNECTION...");
@@ -51,6 +54,9 @@ public class SocketManager {
         }
     }
 
+    /**
+     * déconnexion
+     */
     public static void disconnectFromServer(){
         System.out.println("DISCONNECTION...");
         if(mSocketEngine != null){
@@ -62,14 +68,25 @@ public class SocketManager {
         }
     }
 
+    /**
+     *
+     * @return le chemin vers le fichier cookie Node.js
+     */
     public static String getCookieFilename(){
         return Profil_model.getAppFolder()+File.separator+"pancakeEngine.cookie";
     }
+
+    /**
+     *
+     * @return le chemin vers le cookie Socket.IO
+     */
     public static String getCookieFilename2(){
         return Profil_model.getAppFolder()+File.separator+"pancakeIO.cookie";
     }
 
-
+    /**
+     * suppression des cookies
+     */
     public static void destroyCookies(){
         File f = new File(getCookieFilename());
         if(f.exists()) f.delete();
@@ -77,6 +94,11 @@ public class SocketManager {
         f = new File(getCookieFilename2());
         if(f.exists()) f.delete();
     }
+
+    /**
+     * lance la gestion des cookies (pour la communication avec le serveur). Permet le maintient de la session Node.js.
+     * @param mSocket socket de connexion
+     */
     public static void activateEngineCookies(final Socket mSocket){
         mSocket.on(Socket.EVENT_TRANSPORT, new Emitter.Listener() {
             @Override
@@ -172,6 +194,10 @@ public class SocketManager {
 
     }
 
+    /**
+     * lance la gestion des cookies (pour la communication avec le serveur). Permet le maintient de la session Socket.IO.
+     * @param mSocket socket de connexion
+     */
     public static void activateSocketIOCookies(final com.github.nkzawa.socketio.client.Socket mSocket) {
         mSocket.io().on(Socket.EVENT_TRANSPORT, new Emitter.Listener() {
             @Override
@@ -271,6 +297,9 @@ public class SocketManager {
         });
     }
 
+    /**
+     * Déconnexion (du compte du joueur, pas du serveur)
+     */
     public static void logout(){
         if(mSocketIO != null && mSocketEngine != null && mSocketIO.connected())
             mSocketIO.emit("Deco");

@@ -57,6 +57,7 @@ public class Connexion extends ActionBarActivity {
 
     //private ImageView loading;
 
+    // Gestion de l'évènement de réception du résultat de la connexion. Appelé à partir d'un thread
     private Emitter.Listener onConnexionResult = new Emitter.Listener() {
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -77,7 +78,10 @@ public class Connexion extends ActionBarActivity {
         }
     };
 
-    @Override
+    /**
+     * Initialisation de la vue
+     * @param savedInstanceState
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
@@ -90,6 +94,7 @@ public class Connexion extends ActionBarActivity {
         AnimationDrawable animLoad = (AnimationDrawable)loading.getBackground();
         animLoad.start();*/
 
+        // destruction et réinitialisation des cookies
         SocketManager.destroyCookies();
         SocketManager.initServerConnexion();
         SocketManager.connectToServer();
@@ -103,9 +108,11 @@ public class Connexion extends ActionBarActivity {
         dialog.getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.dialog_background));
         dialog.setCancelable(true);
         dialog.show();*/
+
         //
         SocketManager.mSocketIO.on("Resultat connexion", onConnexionResult);
 
+        // bouton de connexion
         ImageView btnSeConnecter = (ImageView)findViewById(R.id.ivConnect);
         btnSeConnecter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,16 +140,8 @@ public class Connexion extends ActionBarActivity {
             }
         });
 
+        // bouton d'inscription
         btRegistration = (Button)findViewById(R.id.btRegistration);
-
-        Typeface font = Typeface.createFromAsset(getAssets(), Profil_model.defaultFontName);
-
-        TextView tvAppName = (TextView)findViewById(R.id.tvAppName);
-        tvAppName.setTypeface(font);
-        etNickname.setTypeface(font);
-        etPassword.setTypeface(font);
-
-        btRegistration.setTypeface(font);
         btRegistration.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 Intent intent = new Intent(getApplicationContext(), Inscription_view.class);
@@ -150,6 +149,16 @@ public class Connexion extends ActionBarActivity {
             }
         });
 
+        // chargement et application de la police d'écriture
+        Typeface font = Typeface.createFromAsset(getAssets(), Profil_model.defaultFontName);
+
+        TextView tvAppName = (TextView)findViewById(R.id.tvAppName);
+        tvAppName.setTypeface(font);
+        etNickname.setTypeface(font);
+        etPassword.setTypeface(font);
+        btRegistration.setTypeface(font);
+
+        // jouer sans connexion
         btAnonymousGame = (Button)findViewById(R.id.btAnonymousGame);
         btAnonymousGame.setTypeface(font);
         btAnonymousGame.setOnClickListener(new View.OnClickListener(){

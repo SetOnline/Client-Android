@@ -45,6 +45,7 @@ public class Inscription_view extends ActionBarActivity {
     private static final int ACTION_SELECT_PICTURE = 1;
     private static final int ACTION_TAKE_PHOTO = 2;
 
+    // Gestion de l'évènement de réception du résultat de l'inscription. Appelé à partir d'un thread
     private Emitter.Listener onInscriptionResult = new Emitter.Listener() {
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -107,7 +108,10 @@ public class Inscription_view extends ActionBarActivity {
         }
     };
 
-    @Override
+    /**
+     *  Initialisation de la vue
+     * @param savedInstanceState
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription_view);
@@ -124,6 +128,7 @@ public class Inscription_view extends ActionBarActivity {
 
         ivAvatar = (ImageView)findViewById(R.id.ivAvatar);
 
+        // création d'avatar (à partir d'une image ou d'une photo)
         bt_loadAvatar = (Button)findViewById(R.id.btUploadAvatar);
         bt_loadAvatar.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
@@ -150,10 +155,11 @@ public class Inscription_view extends ActionBarActivity {
             }
         });
 
+        // bouton d'inscription
         bt_validateInscription = (Button)findViewById(R.id.btValidate);
         bt_validateInscription.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                // valid data ?
+                // données valides ?
                 if(etPseudo.length() < 3 || etPseudo.length() > 8){
                     Toast.makeText(getBaseContext(), R.string.error_nickname_too_short, Toast.LENGTH_LONG).show();
                     etPseudo.requestFocus();
@@ -187,7 +193,7 @@ public class Inscription_view extends ActionBarActivity {
                     json_psswd.put("name", "mdp");
                     json_psswd.put("value", etPassword.getText().toString());
 
-                    // TODO : SEND AVATAR
+                    // TODO : ENVOYER L'AVATAR
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -201,15 +207,21 @@ public class Inscription_view extends ActionBarActivity {
         });
     }
 
+    /**
+     * Récupération de l'image ou de la photo (pour l'avatar)
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == ACTION_SELECT_PICTURE) {
+            if (requestCode == ACTION_SELECT_PICTURE) { // Avatar depuis IMAGE
                 Uri selectedImageUri = data.getData();
                 BitmapFactory.Options bfOptions = new BitmapFactory.Options();
 
-                bfOptions.inDither=false;          //Disable Dithering mode
-                bfOptions.inPurgeable=true;        //Tell to gc that whether it needs free memory, the Bitmap can be cleared
-                bfOptions.inInputShareable=true;   //Which kind of reference will be used to recover the Bitmap data after being clear, when it will be used in the future
+                bfOptions.inDither=false;          // Désactiver le Dithering
+                bfOptions.inPurgeable=true;        // Supprimable si il y a besoin de RAM
+                bfOptions.inInputShareable=true;
                 bfOptions.inSampleSize=5;
                 bfOptions.inTempStorage=new byte[32 * 1024];
                 InputStream stream = null;
@@ -225,6 +237,7 @@ public class Inscription_view extends ActionBarActivity {
                 //bitmapdata = bos.toByteArray();
                 ivAvatar.setImageBitmap(myImage);
 
+                // redimension
                 Bitmap saved = Profil_model.getResizedBitmap(myImage, Profil_model.AVATAR_PICTURE_SIZE, Profil_model.AVATAR_PICTURE_SIZE);
                 Profil_model.createAppFolderIfNeeded();
                 File f = new File(Profil_model.getAvatarFilename());
@@ -244,7 +257,7 @@ public class Inscription_view extends ActionBarActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else if(requestCode == ACTION_TAKE_PHOTO){
+            } else if(requestCode == ACTION_TAKE_PHOTO){ // avatar depuis PHOTO
                 /*Bundle extras = data.getExtras();
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                 ivAvatar.setImageBitmap(imageBitmap);*/
@@ -254,9 +267,9 @@ public class Inscription_view extends ActionBarActivity {
 
                 BitmapFactory.Options bfOptions = new BitmapFactory.Options();
 
-                bfOptions.inDither=false;          //Disable Dithering mode
-                bfOptions.inPurgeable=true;        //Tell to gc that whether it needs free memory, the Bitmap can be cleared
-                bfOptions.inInputShareable=true;   //Which kind of reference will be used to recover the Bitmap data after being clear, when it will be used in the future
+                bfOptions.inDither=false;          // Désactiver le Dithering
+                bfOptions.inPurgeable=true;        // Supprimable si il y a besoin de RAM
+                bfOptions.inInputShareable=true;
                 bfOptions.inSampleSize=5;
                 bfOptions.inTempStorage=new byte[32 * 1024];
 
@@ -267,18 +280,19 @@ public class Inscription_view extends ActionBarActivity {
                     e.printStackTrace();
                     return;
                 }
+                // redimension
                 final Bitmap myImage = BitmapFactory.decodeStream(stream, null , bfOptions);
                 Bitmap saved = Profil_model.getResizedBitmap(myImage, Profil_model.AVATAR_PICTURE_SIZE, Profil_model.AVATAR_PICTURE_SIZE);
                 f.delete();
 
                 try {
                     f.createNewFile();
-                    //Convert bitmap to byte array
+                    // Conversion de la bitmap en tableau de BYTE
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     saved.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                     byte[] bitmapdata = bos.toByteArray();
 
-                    //write the bytes in file
+                    // Sauvegarde dans un fichier
                     FileOutputStream fos = new FileOutputStream(f);
                     fos.write(bitmapdata);
                     fos.flush();

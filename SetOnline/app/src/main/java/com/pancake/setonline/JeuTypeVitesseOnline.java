@@ -13,9 +13,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-/**
- * Created by Matthieu on 21/03/2015.
- */
 public class JeuTypeVitesseOnline extends JeuTypeOnline {
     protected CountDownTimer cdtUpdateClassement;
     private boolean playing = false;
@@ -98,6 +95,7 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         }
     };
 
+    // Gestion de l'évènement de réception des données de classement. Appelé à partir d'un thread
     private Emitter.Listener onClassementUpdate = new Emitter.Listener() {
         public void call(final Object... args) {
             act.runOnUiThread(new Runnable() {
@@ -125,6 +123,7 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         }
     };
 
+    // Gestion de l'évènement de réception d'un nouveau trophée. Appelé à partir d'un thread
     private Emitter.Listener onUnlockTrophy = new Emitter.Listener() {
         public void call(final Object... args) {
             act.runOnUiThread(new Runnable() {
@@ -141,6 +140,12 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         }
     };
 
+    /**
+     * Initialisation d'un jeu en mode EN LIGNE
+     * @param fj classe réceptrice des évènements du jeu
+     * @param a une activity, utilisée pour "multithreader" les calculs
+     * @return VRAI si l'initialisation s'est passée correctement, FAUX sinon.
+     */
     public boolean init(IJeu_receiver fj, Activity a){
         boolean res = super.init(fj, a);
         if(!res) return false;
@@ -174,7 +179,6 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         return true;
     }
 
-    @Override
     public void shutDown() {
         super.shutDown();
 
@@ -187,7 +191,10 @@ public class JeuTypeVitesseOnline extends JeuTypeOnline {
         SocketManager.mSocketIO.off("Deblocage trophee");
     }
 
-    @Override
+    /**
+     * Envoi du set (vérification en local, puis envoi au serveur si ce set est jugé valide)
+     * @param setTrouve le set proposé par le joueur
+     */
     public void sendSet(String setTrouve) {
         JSONArray nSet = new JSONArray();
 

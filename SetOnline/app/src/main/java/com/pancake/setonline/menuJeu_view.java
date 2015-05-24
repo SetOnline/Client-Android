@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 public class menuJeu_view extends ActionBarActivity {
 
+    // Gestion de l'évènement de réception des demandes d'ami. Appelé à partir d'un thread
     private Emitter.Listener onGetNewFriendDemands = new Emitter.Listener() {
         public void call(final Object... args) {
         runOnUiThread(new Runnable() {
@@ -152,6 +153,9 @@ public class menuJeu_view extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * un appui sur le bouton retour provoque la déconnexion
+     */
     public void onBackPressed() {
         if(SocketManager.isNetGame) {
             SocketManager.logout();

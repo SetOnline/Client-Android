@@ -10,13 +10,16 @@ import com.github.nkzawa.engineio.client.Socket;
 
 import java.net.URI;
 
-/**
- * Created by Matthieu on 25/03/2015.
- */
 public abstract class JeuTypeOnline extends JeuType{
     //protected Socket mSocket_s;
     //protected com.github.nkzawa.socketio.client.Socket mSocket;
 
+    /**
+     *
+     * @param fj classe réceptrice des évènements du jeu
+     * @param a une activity, utilisée pour "multithreader" les calculs
+     * @return VRAI si l'initialisation s'est passée correctement, FAUX sinon.
+     */
     public boolean init(IJeu_receiver fj, Activity a){
         fenetreJeu = fj;
         act = a;
@@ -27,7 +30,10 @@ public abstract class JeuTypeOnline extends JeuType{
         return true;
     }
 
+    /**
+     * Arrêt du mode
+     */
     public void shutDown(){
-        // keep socket connection
+        //
     }
 }

@@ -6,9 +6,6 @@ import org.json.JSONObject;
 
 import java.util.Random;
 
-/**
- * Created by Matthieu on 05/03/2015.
- */
 public class Jeu_model {
     public enum gameMod{
         timed_online,
@@ -24,14 +21,12 @@ public class Jeu_model {
      * @param prop3 la ième propriété de la 3e carte
      * @return Vrai si l'ensemble des 3 propriétés sont égales / différentes. Faux sinon.
      */
-    public static boolean isPropOK(int prop1,int prop2,int prop3) {
+    public static boolean isPropOK(int prop1, int prop2, int prop3) {
         if ((prop1 == prop2) && (prop2 == prop3) && (prop1 == prop3)) { // toutes égales
             return true;
-        }
-        else if ((prop1 != prop2) && (prop2 != prop3) && (prop1 != prop3)) { // toutes différentes
+        } else if ((prop1 != prop2) && (prop2 != prop3) && (prop1 != prop3)) { // toutes différentes
             return true;
-        }
-        else {
+        } else {
             return false;
         }
 
@@ -81,6 +76,12 @@ public class Jeu_model {
         return combi;
     }
 
+    /**
+     *
+     * @param tab le tableau de cartes tirées
+     * @param carte la carte à tester
+     * @return VRAI si la carte a déjà été tirée, faux sinon
+     */
     public static boolean carteDejaTiree(JSONArray tab, String carte) {
         for (int i = 0; i != tab.length(); ++i) {
             try {
@@ -99,6 +100,10 @@ public class Jeu_model {
         return false;
     }
 
+    /**
+     * Génère une nouvelle partie
+     * @return la nouvelle partie
+     */
     public static String generateNewGame(){
         JSONArray tabCartes = new JSONArray();
         int nbSetsTrouvablesPartieEnCours = 0;
@@ -138,6 +143,11 @@ public class Jeu_model {
         return tabCartes.toString();
     }
 
+    /**
+     *
+     * @param partie JSON stringifié de la partie en cours
+     * @return le nombre de solutions dans la partie
+     */
     public static int getNbSolutions(String partie){
         JSONArray tabCartes = null;
         try {

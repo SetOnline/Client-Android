@@ -2,9 +2,6 @@ package com.pancake.setonline;
 
 import android.app.Activity;
 
-/**
- * Created by Matthieu on 21/03/2015.
- */
 public abstract class JeuType {
     protected IJeu_receiver fenetreJeu;
     protected static Activity act;

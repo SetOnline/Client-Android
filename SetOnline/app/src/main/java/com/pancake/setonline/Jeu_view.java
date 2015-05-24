@@ -87,10 +87,12 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jeu);
 
+        // récupération de la largeur & hauteur de l'écran
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
 
+        // chargement de la police d'écriture
         font = Typeface.createFromAsset(getAssets(), Profil_model.defaultFontName);
 
         // permet de mettre en mode immersif (KIT KAT + uniquement !!!)
@@ -169,6 +171,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         tvTimer = (TextView)findViewById(R.id.timer);
         tvNbSetsATrouver = (TextView)findViewById(R.id.tvSetsATrouver);
 
+        // application de la police d'écriture
         tvTimer.setTypeface(font);
         tvNbSetsATrouver.setTypeface(font);
         tvSetsFound.setTypeface(font);
@@ -177,6 +180,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         tvPseudoDP.setTypeface(font);
         tvRangDP.setTypeface(font);
 
+        // cartes du jeu & sélecteur des cartes du jeu
         iv = new ImageView[12];
         iv[0] = (ImageView)findViewById(R.id.imageView);
         iv[1] = (ImageView)findViewById(R.id.imageView2);
@@ -207,12 +211,14 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         ib[10] = (ImageButton)findViewById(R.id.imageButton11);
         ib[11] = (ImageButton)findViewById(R.id.imageButton12);
 
+        // aucune carte au départ
         for(int i = 0; i != 12; ++i){
             ib[i].setOnClickListener(new cardButton(i));
             ib[i].setBackgroundResource(0);
             iv[i].setBackgroundResource(0);
         }
 
+        // étoiles de difficulté
         ivDifficultyStar1 = (ImageView)findViewById(R.id.ivDifficulty1);
         ivDifficultyStar2 = (ImageView)findViewById(R.id.ivDifficulty2);
         ivDifficultyStar3 = (ImageView)findViewById(R.id.ivDifficulty3);
@@ -221,6 +227,7 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         ivDifficultyStar2.setImageResource(0);
         ivDifficultyStar3.setImageResource(0);
 
+        // application du mode de jeu
         if(SocketManager.isNetGame) {
             jeu = new JeuTypeVitesseOnline();
         } else {
@@ -260,7 +267,9 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         return this.getResources().getIdentifier(name, "drawable", this.getPackageName());
     }
 
-    // permet d'annuler la sélection des 3 cartes
+    /**
+     * permet d'annuler la sélection des 3 cartes
+     */
     private void undoSelection() {
         /*if(idSelectedCard1 > -1) ib[idSelectedCard1].setAlpha(1.0f);
         if(idSelectedCard2 > -1) ib[idSelectedCard2].setAlpha(1.0f);
@@ -375,6 +384,8 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
      * ...
      * name: carte11 value:1232
      * name:nbSets value:5
+     *
+     * @param cartes cartes de la nouvelle partie
      */
     public void onNewGame(String cartes) {
         validSetsFound.clear(); // remise à zéro des sets trouvés pour la partie en cours
@@ -433,10 +444,14 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         }
     }
 
+    /**
+     * Mise à jour de l'affichage du classement. Appelé depuis le mode de jeu.
+     * @param cls liste des éléments du classement
+     */
     public void updateClassement(String[] cls){
-        for(String s : cls){
+        /*for(String s : cls){
             System.out.println("add : " + s);
-        }
+        }*/
 
         lv_adapter_classement = new GameClassementListAdapter(getBaseContext(), cls);
         lv_classement.setAdapter(lv_adapter_classement);
@@ -444,7 +459,12 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         ancien_classement = cls;
     }
 
-    @Override
+    /**
+     * Déverrouillage d'un trophée. Appelé depuis le mode de jeu (fonctionne uniquement pour le jeu en ligne).
+     * @param picName nom de l'image du trophée
+     * @param name nom du trophée
+     * @param desc description du trophée
+     */
     public void unlockTrophy(String picName, String name, String desc) {
         /*AlertDialog.Builder dlgAddFriend = new AlertDialog.Builder(Jeu_view.this);
         dlgAddFriend.setMessage(desc);
@@ -479,6 +499,8 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
      * name:carte1 value:1222
      * name:carte2 value:2131
      * name: value:
+     *
+     * @param setCorrect le set validé. Provoque un feedback visuel positif.
      */
     public void onSetCorrect(String setCorrect) {
         String newValidSet = "";
@@ -535,7 +557,9 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
     }
 
     /**
-     * évènement récupération d'un set invalide
+     * évènement récupération d'un set invalide. Provoque un feedback visuel négatif.
+     *
+     * @param setIncorrect set non valide
      */
     public void onSetIncorrect(String setIncorrect) {
         //Toast.makeText(Jeu_view.this, "Set invalide :(", Toast.LENGTH_LONG).show();
@@ -555,6 +579,10 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         gbSetTimer.start();
     }
 
+    /**
+     * évènement récupération d'un set incorrect car déjà donné. Provoque un feedback visuel spécial.
+     * @param setIncorrect
+     */
     public void onSetDejaDonne(String setIncorrect) {
         gbSet.setVisibility(View.VISIBLE);
         gbSet.setBackgroundResource(R.drawable.already_given_set);
@@ -579,7 +607,6 @@ public class Jeu_view extends ActionBarActivity implements IJeu_receiver{
         private int idx;
         public cardButton(int index) {
             super();
-            // keep references for your onClick logic
             idx = index;
         }
 

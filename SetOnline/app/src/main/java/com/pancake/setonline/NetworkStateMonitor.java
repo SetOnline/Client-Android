@@ -7,9 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.Toast;
 
-/**
- * Created by Matthieu on 07/03/2015.
- */
 public class NetworkStateMonitor /*extends BroadcastReceiver*/ {
     /**
      * Cette fonction est appellée automatiquement lorsque la connexion du téléphone hôte change
